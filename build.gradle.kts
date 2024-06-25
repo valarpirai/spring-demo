@@ -1,17 +1,17 @@
 plugins {
-	id("org.springframework.boot") version "3.3.1"
-	id("io.spring.dependency-management") version "1.1.5"
-	kotlin("jvm") version "1.9.24"
-	kotlin("plugin.spring") version "1.9.24"
+	id("org.springframework.boot") version "2.3.0.RELEASE"
+	id("io.spring.dependency-management") version "1.0.8.RELEASE"
+	kotlin("jvm") version "1.3.50"
 }
 
 group = "com.example"
 version = "0.0.1-SNAPSHOT"
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+//	toolchain {
+//		languageVersion = JavaLanguageVersion.of(11)
+//	}
+	sourceCompatibility = JavaVersion.VERSION_1_8
 }
 
 repositories {
@@ -27,9 +27,16 @@ dependencies {
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
-kotlin {
-	compilerOptions {
-		freeCompilerArgs.addAll("-Xjsr305=strict")
+//kotlin {
+//	compilerOptions {
+//		freeCompilerArgs.addAll("-Xjsr305=strict")
+//	}
+//}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+	kotlinOptions {
+		freeCompilerArgs = listOf("-Xjsr305=strict")
+		jvmTarget = "11"
 	}
 }
 
