@@ -7,4 +7,5 @@ import javax.persistence.Id
 
 @Repository
 interface AuthorRepository : CrudRepository<Author, Id> {
+    abstract fun save(author: Author): Author
 }
