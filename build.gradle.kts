@@ -2,6 +2,7 @@ plugins {
 	id("org.springframework.boot") version "2.3.0.RELEASE"
 	id("io.spring.dependency-management") version "1.0.8.RELEASE"
 	kotlin("jvm") version "1.5.31"
+	kotlin("plugin.jpa") version "1.5.31"
 	kotlin("plugin.spring") version "1.5.31"
 }
 
@@ -23,7 +24,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-aop")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	runtimeOnly("com.mysql:mysql-connector-j")
+	runtimeOnly("com.mysql:mysql-connector-j:8.3.0")
 	implementation("org.springframework.boot:spring-boot-starter-graphql:2.7.1")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
