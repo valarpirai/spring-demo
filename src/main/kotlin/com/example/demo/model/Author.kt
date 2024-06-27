@@ -4,6 +4,7 @@ import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
+import javax.persistence.OneToMany
 
 @Entity
 class Author {
@@ -12,4 +13,7 @@ class Author {
     var id: Long? = null;
     var firstName: String? = null;
     var lastName: String? = null;
+
+    @OneToMany(mappedBy = "author")
+    var books: Set<Book>? = null;
 }
