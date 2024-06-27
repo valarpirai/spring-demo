@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface BookRepository : CrudRepository<Book, Long> {
+    abstract fun findByAuthorId(id: Long): List<Book>
 }
