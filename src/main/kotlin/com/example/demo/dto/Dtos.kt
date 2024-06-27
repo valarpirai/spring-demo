@@ -4,7 +4,7 @@ class AuthorDto {
     var id: Long? = null
     lateinit var firstName: String
     lateinit var lastName: String
-    lateinit var books: Set<BookDto>
+    var books: Set<BookDto>? = null
 }
 
 class BookDto {
