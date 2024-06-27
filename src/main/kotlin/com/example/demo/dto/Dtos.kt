@@ -10,6 +10,6 @@ class AuthorDto {
 class BookDto {
     var id: Long? = null
     lateinit var name: String
-    var pageCount: Long? = null
+    var pageCount: Int? = null
 }
 

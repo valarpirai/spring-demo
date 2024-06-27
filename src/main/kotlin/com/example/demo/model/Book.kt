@@ -6,7 +6,7 @@ import javax.persistence.*
 class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var Id: Long? = null;
+    var id: Long? = null;
     var name: String? = null;
 
     var pageCount: Int? = null;
