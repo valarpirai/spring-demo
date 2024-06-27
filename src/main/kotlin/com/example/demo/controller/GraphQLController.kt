@@ -1,4 +1,4 @@
 package com.example.demo.controller
 
-class GraphQlController {
+class GraphQLController {
 }

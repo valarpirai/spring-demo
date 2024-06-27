@@ -23,7 +23,7 @@ class LoggerAspect {
 
     @Around("@annotation(org.springframework.web.bind.annotation.GetMapping)")
     fun around(jointPoint: ProceedingJoinPoint): Any? {
-        logger.info("Before Request");
+        logger.info("*** Before Request ***");
         val res = jointPoint.proceed();
         logger.info("After Request")
         return res;

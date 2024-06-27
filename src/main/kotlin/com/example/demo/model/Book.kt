@@ -11,7 +11,7 @@ class Book {
 
     var pageCount: Int? = null;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id")
     var author: Author? = null;
 }

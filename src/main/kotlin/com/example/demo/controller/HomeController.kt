@@ -2,6 +2,7 @@ package com.example.demo.controller
 
 import com.example.demo.aop.LoggerAspect
 import com.example.demo.dto.AuthorDto
+import com.example.demo.dto.BookDto
 import com.example.demo.model.Author
 import com.example.demo.model.Book
 import com.example.demo.repository.AuthorRepository
@@ -49,13 +50,13 @@ class HomeController {
         return authorDtos;
     }
 
-    fun convertToDto(author: Author): AuthorDto {
-        return modelMapper.map(author, AuthorDto::class.java);
-    }
-
-        @GetMapping("/books")
-    fun books() : MutableIterable<Book> {
-        return bookRepository.findAll();
+    @GetMapping("/books")
+    fun books(): MutableList<BookDto> {
+        val books = mutableListOf<BookDto>()
+        for (book in bookRepository.findAll().toList()) {
+            books.add(convertToDto(book))
+        }
+        return books;
     }
 
     @PostMapping("/book")
@@ -76,6 +77,14 @@ class HomeController {
 //            Create Author
             book.author = authorRepository.save(book.author!!);
         }
-        return bookRepository.save(book);
+        return convertToDto(bookRepository.save(book));
+    }
+
+    private fun convertToDto(author: Author): AuthorDto {
+        return modelMapper.map(author, AuthorDto::class.java);
+    }
+
+    private fun convertToDto(book: Book): BookDto {
+        return modelMapper.map(book, BookDto::class.java);
     }
 }
