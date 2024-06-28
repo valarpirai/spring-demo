@@ -1,0 +1,41 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+  filelog:
+    start_at: beginning
+    include:
+      - /example.log
+    include_file_path: true
+    multiline: {line_start_pattern: "\\n"}
+  hostmetrics:
+      collection_interval: 30s
+      scrapers:
+        cpu:
+        memory:
+exporters:
+  coralogix:
+    domain: "coralogix.in"
+    private_key: "cxtp_uLMjnsEbcbWhboxWvGNZpA65mimOTY"
+    application_name: "Demo Application"
+    subsystem_name: "GraphQL service"
+    timeout: 30s
+
+processors:
+  batch:
+
+service:
+  pipelines:
+    traces:
+      receivers: [ otlp ]
+      processors: [ batch ]
+      exporters: [ coralogix ]
+    logs:
+      receivers: [ filelog ]
+      processors: [ batch ]
+      exporters: [ coralogix ]
+    metrics:
+      receivers: [ hostmetrics ]
+      exporters: [ coralogix ]

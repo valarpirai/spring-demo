@@ -7,6 +7,8 @@ import com.example.demo.model.Author
 import com.example.demo.model.Book
 import com.example.demo.repository.AuthorRepository
 import com.example.demo.repository.BookRepository
+import io.opentelemetry.api.trace.SpanKind
+import io.opentelemetry.instrumentation.annotations.WithSpan
 import org.modelmapper.ModelMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -26,20 +28,21 @@ class BookService {
     @Autowired
     lateinit var modelMapper: ModelMapper;
 
-
+    @WithSpan(value = "authorDTO", kind = SpanKind.SERVER)
     private fun convertToDto(author: Author): AuthorDto {
         return modelMapper.map(author, AuthorDto::class.java);
     }
 
+    @WithSpan(value = "bookDTO", kind = SpanKind.SERVER)
     private fun convertToDto(book: Book): BookDto {
         return modelMapper.map(book, BookDto::class.java);
     }
 
+    @WithSpan
     fun createBook(book: Book): Any {
         val author = book.author;
-        var auth: Author? = null;
 
-        auth = author?.firstName?.let { author.lastName?.let { it1 ->
+        val auth = author?.firstName?.let { author.lastName?.let { it1 ->
             authorRepository.findByFirstNameAndLastName(it,
                 it1
             )
@@ -55,6 +58,7 @@ class BookService {
         return convertToDto(bookRepository.save(book));
     }
 
+    @WithSpan
     fun getBookById(bookId: Long): BookDto? {
         val optionalBook = bookRepository.findById(bookId)
         if (optionalBook.isPresent) {
@@ -63,6 +67,7 @@ class BookService {
         return null;
     }
 
+    @WithSpan
     fun getAllBooks(): MutableList<BookDto> {
         val books = mutableListOf<BookDto>()
         for (book in bookRepository.findAll().toList()) {
@@ -71,6 +76,7 @@ class BookService {
         return books;
     }
 
+    @WithSpan
     fun getAllAuthorsWithBookDetails(): MutableList<AuthorDto> {
         val authors = authorRepository.findAll().toList();
         logger.info(authors.count().toString())
@@ -83,6 +89,7 @@ class BookService {
         return authorDtos;
     }
 
+    @WithSpan
     fun getAuthorById(authorId: Long): Author {
         return authorRepository.findById(authorId).get()
     }

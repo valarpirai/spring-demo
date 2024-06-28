@@ -6,6 +6,7 @@ import com.example.demo.model.Book
 import com.example.demo.repository.AuthorRepository
 import com.example.demo.repository.BookRepository
 import com.example.demo.service.BookService
+import io.opentelemetry.instrumentation.annotations.WithSpan
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.QueryMapping
@@ -31,11 +32,13 @@ class GraphQLController {
         return authorRepository.findById(id).get()
     }
 
+    @WithSpan
     @SchemaMapping
     fun author(book: Book): Author? {
         return book.author?.id?.let { authorRepository.findById(it).get() }
     }
 
+    @WithSpan
     @SchemaMapping
     fun books(author: Author): List<Book>? {
         return author.id?.let { bookRepository.findByAuthorId(it) }

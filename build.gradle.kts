@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.example"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1"
 
 java {
 //	toolchain {
@@ -32,6 +32,8 @@ dependencies {
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	implementation("org.modelmapper:modelmapper:3.2.0")
+	implementation("io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations:2.4.0")
+	implementation("io.opentelemetry.contrib:opentelemetry-samplers:1.33.0-alpha")
 }
 
 //kotlin {
