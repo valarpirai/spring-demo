@@ -25,12 +25,21 @@ exporters:
 
 processors:
   batch:
+  groupbytrace:
+  filter:
+    error_mode: ignore
+    traces:
+      span:
+        # - 'attributes["code.function"] == "convertToDto"'
+        # - attributes["span.kind"] == "server"
+        # - attributes["http.request.method"] != nil
+
 
 service:
   pipelines:
     traces:
       receivers: [ otlp ]
-      processors: [ batch ]
+      processors: [ filter ]
       exporters: [ coralogix ]
     logs:
       receivers: [ filelog ]

@@ -33,7 +33,7 @@ class BookService {
         return modelMapper.map(author, AuthorDto::class.java);
     }
 
-    @WithSpan(value = "bookDTO", kind = SpanKind.SERVER)
+    @WithSpan(value = "greeting")
     private fun convertToDto(book: Book): BookDto {
         return modelMapper.map(book, BookDto::class.java);
     }
