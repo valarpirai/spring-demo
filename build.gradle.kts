@@ -25,15 +25,20 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-aop")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	runtimeOnly("com.mysql:mysql-connector-j:8.3.0")
+	implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2021.0.3"))
+	implementation("org.springframework.cloud:spring-cloud-starter-sleuth")
 	implementation("org.springframework.boot:spring-boot-starter-graphql")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+	implementation("org.modelmapper:modelmapper:3.2.0")
+	implementation("io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations:2.4.0")
+	implementation("io.opentelemetry:opentelemetry-exporter-otlp:1.38.0")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-	implementation("org.modelmapper:modelmapper:3.2.0")
-	implementation("io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations:2.4.0")
-	implementation("io.opentelemetry.contrib:opentelemetry-samplers:1.33.0-alpha")
 }
 
 //kotlin {
