@@ -34,6 +34,7 @@ dependencies {
 
 	implementation("org.modelmapper:modelmapper:3.2.0")
 	implementation("io.opentelemetry:opentelemetry-api:1.16.0")
+	implementation("io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.4.0")
 	implementation("io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations:2.4.0")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

@@ -28,12 +28,12 @@ class BookService {
     @Autowired
     lateinit var modelMapper: ModelMapper;
 
-    @WithSpan(value = "authorDTO", kind = SpanKind.SERVER)
+    @WithSpan(value = "authorDTO")
     private fun convertToDto(author: Author): AuthorDto {
         return modelMapper.map(author, AuthorDto::class.java);
     }
 
-    @WithSpan(value = "greeting")
+    @WithSpan(value = "bookDto")
     private fun convertToDto(book: Book): BookDto {
         return modelMapper.map(book, BookDto::class.java);
     }

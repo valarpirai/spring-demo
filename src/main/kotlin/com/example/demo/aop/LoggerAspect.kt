@@ -11,6 +11,7 @@ import org.aspectj.lang.reflect.CodeSignature
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import io.opentelemetry.api.trace.Span
+import io.opentelemetry.instrumentation.api.instrumenter.LocalRootSpan
 import org.springframework.beans.factory.annotation.Autowired
 
 import org.springframework.context.annotation.Configuration
@@ -30,23 +31,16 @@ class LoggerAspect {
 
     @Before("@annotation(org.springframework.graphql.data.method.annotation.QueryMapping)")
     fun preProcessGraphQLEndpoint(joinPoint: JoinPoint) {
-        val logData = mutableMapOf<String, String>()
         val signature = joinPoint.signature as CodeSignature
-        logData["end_point"] = signature.name
+
+        val rootSpan = LocalRootSpan.current()
+        rootSpan.setAttribute("endPoint", signature.name)
+        rootSpan.setAttribute("tenantId", "1234")
 
         val span: Span = Span.current()
-        //Add custom attributes to Span
-        span.setAttribute("endPoint", signature.name)
-        logger.info("Endpoint ->" + signature.name);
-        val spanContext = tracer.currentSpan().context()
-        spanContext.traceIdString()?.let {
-            span.setAttribute("LogTraceID", spanContext.traceId().toString())
-        }
-        spanContext.spanIdString()?.let {
-            span.setAttribute("LogSpanID", spanContext.spanId().toString())
-        }
-//        We can get endpoint in Aspects
-//        span.spanContext
+        val context = span.spanContext
+        logger.info("TraceId ->" + context.traceId);
+        logger.info("SpanId ->" + context.spanId);
     }
 
     @Around("@annotation(org.springframework.web.bind.annotation.GetMapping)")
