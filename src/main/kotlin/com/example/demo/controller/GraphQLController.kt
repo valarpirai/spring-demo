@@ -32,6 +32,11 @@ class GraphQLController {
         return authorRepository.findById(id).get()
     }
 
+    @QueryMapping
+    fun getBooks(): MutableIterable<Book> {
+        return bookRepository.findAll();
+    }
+
     @WithSpan
     @SchemaMapping
     fun author(book: Book): Author? {

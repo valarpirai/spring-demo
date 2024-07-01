@@ -31,7 +31,7 @@ processors:
     traces:
       span:
         # - 'attributes["code.function"] == "convertToDto"'
-        # - attributes["span.kind"] == "server"
+        # - attributes["end_point"] == nil
         # - attributes["http.request.method"] != nil
 
 
@@ -39,7 +39,7 @@ service:
   pipelines:
     traces:
       receivers: [ otlp ]
-      processors: [ filter ]
+      processors: [ batch ]
       exporters: [ coralogix ]
     logs:
       receivers: [ filelog ]

@@ -55,7 +55,11 @@ class HomeController {
 
     @GetMapping("/error")
     fun error() {
+        throwError()
+    }
 
+    fun throwError() {
+        throw Exception("Test Exceptions");
     }
 
 }
