@@ -1,14 +1,18 @@
 package com.example.demo.controller
 
 import com.example.demo.dto.BookDto
+import com.example.demo.dto.BookWithAuthorDto
 import com.example.demo.model.Author
 import com.example.demo.model.Book
 import com.example.demo.repository.AuthorRepository
 import com.example.demo.repository.BookRepository
 import com.example.demo.service.BookService
 import io.opentelemetry.instrumentation.annotations.WithSpan
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.graphql.data.method.annotation.Argument
+import org.springframework.graphql.data.method.annotation.MutationMapping
 import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.graphql.data.method.annotation.SchemaMapping
 import org.springframework.stereotype.Controller
@@ -16,6 +20,11 @@ import org.springframework.stereotype.Controller
 
 @Controller
 class GraphQLController {
+    private val logger: Logger = LoggerFactory.getLogger(GraphQLController::class.java)
+
+    @Autowired
+    lateinit var bookService: BookService
+
     @Autowired
     lateinit var bookRepository: BookRepository
 
@@ -33,8 +42,14 @@ class GraphQLController {
     }
 
     @QueryMapping
-    fun getBooks(): MutableIterable<Book> {
-        return bookRepository.findAll();
+    fun getBooks(): MutableList<BookWithAuthorDto> {
+        return bookService.getAllBooks();
+    }
+
+    @MutationMapping
+    fun createBook(@Argument input: Book): BookWithAuthorDto? {
+
+        return bookService.createBook(input);
     }
 
     @WithSpan

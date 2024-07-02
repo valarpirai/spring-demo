@@ -1,7 +1,9 @@
 package com.example.demo.controller
 
 import com.example.demo.dto.AuthorDto
+import com.example.demo.dto.AuthorWithBooksDto
 import com.example.demo.dto.BookDto
+import com.example.demo.dto.BookWithAuthorDto
 import com.example.demo.model.Book
 import com.example.demo.service.BookService
 import org.slf4j.Logger
@@ -31,17 +33,17 @@ class HomeController {
     }
 
     @GetMapping("/authors")
-    fun authors(): MutableList<AuthorDto> {
+    fun authors(): MutableList<AuthorWithBooksDto> {
         return bookService.getAllAuthorsWithBookDetails()
     }
 
     @GetMapping("/books")
-    fun books(): MutableList<BookDto> {
+    fun books(): MutableList<BookWithAuthorDto> {
         return bookService.getAllBooks()
     }
 
     @PostMapping("/book")
-    fun createBook(@RequestBody book: Book): Any {
+    fun createBook(@RequestBody book: Book): BookWithAuthorDto? {
         return bookService.createBook(book);
     }
 

@@ -1,10 +1,17 @@
+# =================== QUERY ===========================
 type Query {
-    bookById(id: ID): Book
-    getBooks: [Book]
+    bookById(id: ID): BookWithAuthor
+    getBooks: [BookWithAuthor]
     authorById(id: ID): AuthorWithBooks
 }
 
 type Book {
+    id: ID
+    name: String
+    pageCount: Int
+}
+
+type BookWithAuthor {
     id: ID
     name: String
     pageCount: Int
@@ -22,4 +29,19 @@ type AuthorWithBooks {
     firstName: String
     lastName: String
     books: [Book]
+}
+# =================== MUTATION ===========================
+type Mutation {
+    createBook(input: BookInput): BookWithAuthor
+}
+
+input BookInput {
+    name: String
+    pageCount: Int
+    author: AuthorInput
+}
+
+input AuthorInput {
+    firstName: String
+    lastName: String
 }

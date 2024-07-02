@@ -1,11 +1,13 @@
 docker pull otel/opentelemetry-collector-contrib
 docker run -d --rm -v ~/dev/demo/config.yaml:/etc/otelcol-contrib/config.yaml -v ~/dev/demo/example.log:/example.log -p 4317:4317 otel/opentelemetry-collector-contrib
 
+export OTEL_SERVICE_NAME="Demo-Application"
 export OTEL_TRACES_EXPORTER="otlp"
 export OTEL_EXPORTER_OTLP_TRACES_PROTOCOL="grpc"
 export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4317"
 export OTEL_RESOURCE_ATTRIBUTES="service.name=Demo-Application,application.name=Demo-Application,api.name=Demo-Application,cx.application.name=Demo-Application,cx.subsystem.name=Graphql-Application"
-export OTEL_RESOURCE_ATTRIBUTES="service.name=Galaxy-Application,application.name=Galaxy-Application,api.name=Accounts-web-Application,cx.application.name=Galaxy-Application,cx.subsystem.name=Accounts-web-Application"
+
+export OTEL_RESOURCE_ATTRIBUTES="service.name=Galaxy-Application,application.name=accounts-web,api.name=Accounts-web-Application,cx.application.name=accounts-web,cx.subsystem.name=Accounts-web-Application"
 
 
 ./gradlew build
@@ -30,3 +32,7 @@ docker run -d --rm \
 ./gradlew accounts-web:build
 
 java -javaagent:opentelemetry-javaagent.jar -Dio.opentelemetry.javaagent.slf4j.simpleLogger.defaultLogLevel=off -jar accounts-web/build/libs/accounts-web.war
+
+
+java -javaagent:/Users/valarpiraichandran/spring-startup-analyzer/lib/spring-profiler-agent.jar -Dspring-startup-analyzer.admin.http.server.port=8066 -jar 
+

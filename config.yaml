@@ -25,7 +25,17 @@ exporters:
 
 processors:
   batch:
-  groupbytrace:
+  tail_sampling:
+    decision_wait: 10s
+    num_traces: 1000
+    policies:
+      [
+        {
+          name: customer_id_policy,
+          type: boolean_attribute,
+          boolean_attribute: { key: app.force_sample, value: true },
+        }
+      ]
   filter:
     error_mode: ignore
     traces:
@@ -39,6 +49,7 @@ service:
   pipelines:
     traces:
       receivers: [ otlp ]
+      # processors: [ tail_sampling ]
       processors: [ batch ]
       exporters: [ coralogix ]
     logs:
