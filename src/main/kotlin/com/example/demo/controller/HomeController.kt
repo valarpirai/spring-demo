@@ -43,6 +43,11 @@ class HomeController {
         return bookService.getBooks(page, pageSize);
     }
 
+    @GetMapping("/booksWithCursor")
+    fun booksWithCursor(@RequestParam(required = false, defaultValue = "10") first: Int, @RequestParam(required = false, defaultValue = "") cursor: String): Map<String, Any> {
+        return bookService.getBooksCursor(first, cursor)
+    }
+
     @PostMapping("/book")
     fun createBook(@RequestBody book: Book): BookWithAuthorDto? {
         return bookService.createBook(book);

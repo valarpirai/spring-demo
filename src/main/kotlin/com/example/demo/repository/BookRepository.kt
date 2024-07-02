@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository
 interface BookRepository : CrudRepository<Book, Long> {
     abstract fun findByAuthorId(id: Long): List<Book>
     fun findAll(pageInfo: Pageable): MutableIterable<Book>
+    abstract fun findByIdGreaterThan(id: Long, limit: Pageable): List<Book>
 }

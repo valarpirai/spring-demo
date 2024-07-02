@@ -9,6 +9,8 @@ import com.example.demo.model.Book
 import com.example.demo.repository.AuthorRepository
 import com.example.demo.repository.BookRepository
 import io.opentelemetry.instrumentation.annotations.WithSpan
+import org.bouncycastle.util.encoders.Base64
+import org.bouncycastle.util.encoders.UTF8
 import org.modelmapper.ModelMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -87,6 +89,39 @@ class BookService {
                 books.add(dto);
         }
         return books;
+    }
+
+    @WithSpan
+    fun getBooksCursor(first: Int = 0, after: String): Map<String, Any> {
+        val books = mutableListOf<BookWithAuthorDto>()
+        logger.info("Cursor -> $after")
+        val id = decodeCursor(after)
+        val limit: Pageable = PageRequest.of(0, first + 1)
+        logger.info("ID $id")
+        for (book in bookRepository.findByIdGreaterThan(id, limit)) {
+            val dto = convertToDto(book, true)
+            if (dto is BookWithAuthorDto)
+                books.add(dto);
+        }
+
+        val pageInfo = mapOf("startCursor" to encodeCursor(books.first().id),
+            "endCursor" to encodeCursor(books.last().id),
+            "hasNextPage" to (books.size > first));
+        books.removeLast()
+        val responseObj = mapOf("books" to books,
+            "pageInfo" to pageInfo);
+        return responseObj;
+    }
+
+    private fun decodeCursor(cursor: String): Long {
+        return if (cursor.isNotEmpty())
+            Base64.decode(cursor).decodeToString().toLong()
+        else
+            0
+    }
+
+    fun encodeCursor(id: Long?): String {
+        return Base64.encode(id.toString().toByteArray()).decodeToString()
     }
 
     @WithSpan
