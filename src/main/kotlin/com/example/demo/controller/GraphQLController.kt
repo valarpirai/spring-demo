@@ -1,6 +1,5 @@
 package com.example.demo.controller
 
-import com.example.demo.dto.BookDto
 import com.example.demo.dto.BookWithAuthorDto
 import com.example.demo.model.Author
 import com.example.demo.model.Book
@@ -42,8 +41,13 @@ class GraphQLController {
     }
 
     @QueryMapping
-    fun getBooks(): MutableList<BookWithAuthorDto> {
-        return bookService.getAllBooks();
+    fun getBooks(@Argument page: Int, @Argument pageSize: Int): Map<String, Any> {
+        logger.info("$page -> $pageSize");
+        val pageInfo = mapOf("page" to page, "pageSize" to pageSize, "hasNextPage" to false);
+        val responseObj = mapOf("books" to bookService.getBooks(page, pageSize),
+            "pageInfo" to pageInfo);
+
+        return responseObj;
     }
 
     @MutationMapping

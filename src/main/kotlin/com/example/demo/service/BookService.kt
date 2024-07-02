@@ -13,7 +13,10 @@ import org.modelmapper.ModelMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+
 
 @Service
 class BookService {
@@ -75,9 +78,10 @@ class BookService {
     }
 
     @WithSpan
-    fun getAllBooks(): MutableList<BookWithAuthorDto> {
+    fun getBooks(page: Int = 0, pageSize: Int = 5): MutableList<BookWithAuthorDto> {
         val books = mutableListOf<BookWithAuthorDto>()
-        for (book in bookRepository.findAll().toList()) {
+        val paginated: Pageable = PageRequest.of(page, pageSize);
+        for (book in bookRepository.findAll(paginated).toList()) {
             val dto = convertToDto(book, true)
             if (dto is BookWithAuthorDto)
                 books.add(dto);

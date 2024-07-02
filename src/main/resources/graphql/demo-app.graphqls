@@ -1,8 +1,8 @@
 # =================== QUERY ===========================
 type Query {
     bookById(id: ID): BookWithAuthor
-    getBooks: [BookWithAuthor]
     authorById(id: ID): AuthorWithBooks
+    getBooks(page: Int, pageSize: Int): BooksPage
 }
 
 type Book {
@@ -16,6 +16,17 @@ type BookWithAuthor {
     name: String
     pageCount: Int
     author: Author
+}
+
+type BooksPage {
+    books: [BookWithAuthor]
+    pageInfo: PageInfo!
+}
+
+type PageInfo {
+    page: Int
+    pageSize: Int
+    hasNextPage: Boolean!
 }
 
 type Author {
