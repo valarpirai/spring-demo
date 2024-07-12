@@ -1,0 +1,19 @@
+query {
+    getBooks(page: 3, pageSize: 3) {
+        books {
+            id
+            name
+            pageCount
+            author {
+                id
+                firstName
+                lastName
+            }
+        }
+        pageInfo {
+            page
+            pageSize
+            hasNextPage
+        }
+    }
+}

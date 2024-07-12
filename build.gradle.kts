@@ -29,6 +29,10 @@ dependencies {
 	implementation("org.springframework.cloud:spring-cloud-starter-sleuth")
 	implementation("org.springframework.boot:spring-boot-starter-graphql")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+	implementation("org.springframework.boot:spring-boot-starter-quartz")
+
+	implementation("com.launchdarkly:launchdarkly-java-server-sdk:7.0.0")
+
 
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 
@@ -39,6 +43,7 @@ dependencies {
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+	testImplementation("com.graphql-java-kickstart:graphql-spring-boot-starter-test:6.0.0")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

@@ -1,5 +1,8 @@
 docker pull otel/opentelemetry-collector-contrib
+
 docker run -d --rm -v ~/dev/demo/config.yaml:/etc/otelcol-contrib/config.yaml -v ~/dev/demo/example.log:/example.log -p 4317:4317 otel/opentelemetry-collector-contrib
+
+docker run -d --rm -v ~/dev/demo/config.yaml:/etc/otelcol-contrib/config.yaml -v ~/dev/demo/example.log:/example.log -p 4317:4317 --cpus=".2" --memory=2000m otel/opentelemetry-collector-contrib
 
 export OTEL_SERVICE_NAME="Demo-Application"
 export OTEL_TRACES_EXPORTER="otlp"
@@ -34,5 +37,5 @@ docker run -d --rm \
 java -javaagent:opentelemetry-javaagent.jar -Dio.opentelemetry.javaagent.slf4j.simpleLogger.defaultLogLevel=off -jar accounts-web/build/libs/accounts-web.war
 
 
-java -javaagent:/Users/valarpiraichandran/spring-startup-analyzer/lib/spring-profiler-agent.jar -Dspring-startup-analyzer.admin.http.server.port=8066 -jar 
+java -javaagent:/Users/valarpiraichandran/spring-startup-analyzer/lib/spring-profiler-agent.jar -Dspring-startup-analyzer.admin.http.server.port=8067 -Dspring.data.jpa.repositories.bootstrap-mode=lazy -jar accounts-web/build/libs/accounts-web.war
 

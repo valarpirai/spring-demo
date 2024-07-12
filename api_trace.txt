@@ -1,0 +1,147 @@
+-> com.kohia.galaxy.filter.DomainInfoFilter#doFilter
+	-> com.kohia.galaxy.filter.InlineImageFilter#doFilter
+		-> com.kohia.galaxy.filter.ApplicationExceptionHandlerFilter#doFilter
+			-> com.kohia.galaxy.filter.TenantFilter#doFilter
+				-> schemaHelperService.getSchemaDetails
+				GET subdomainschemadetailscache::msp6044988891135721472
+				-> portalDomainService.getCustomerPortalDomains
+				GET customer_portal_domains::6044988889516720128
+
+				-> com.kohia.galaxy.filter.AccessFilter#doFilter
+					-> com.kohia.galaxy.util.GalaxyUtil#validateTenantOperations
+						GET "SUSPEND-OPERATIONS::6044988889516720128"
+
+				 	-> schemaHelperService.getSchemaDetails
+					GET tenantschemadetailscache::6044988889516720128
+
+					-> commonCacheService.getMSPLanguage
+					GET customer_language::6044988889516720128
+
+					-> portalDomainService.getCustomerPortalDomains
+					GET customer_portal_domains::6044988889516720128
+
+						-> com.kohia.galaxy.filter.AppAuthenticationIntrospectionFilter#doFilter
+
+							-> com.kohia.galaxy.security.GalaxyCsrfTokenRepository#loadToken
+								-> com.kohia.galaxy.security.GalaxyCustomRememberMeServices#getSession
+									-> com.kohia.galaxy.service.SessionService#getActiveSessionBySessionKey
+									-> com.kohia.galaxy.service.SessionService#getSessionEntity
+										
+										-> com.kohia.galaxy.repository.SessionRepo#getSessionEntity
+										USE data_us_412462193919115264
+										select * from Session session0_ where session0_.sessionKey=?
+										
+										select * from User user0_ left outer join UserRole user0_1_ on user0_.userId=user0_1_.userId left outer join Account account1_ on user0_.accountId=account1_.accountId left outer join User user2_ on account1_.accountManagerId=user2_.userId left outer join UserRole user2_1_ on user2_.userId=user2_1_.userId left outer join Site site3_ on account1_.hqSiteId=site3_.id left outer join User user4_ on account1_.primaryContactId=user4_.userId left outer join UserRole user4_1_ on user4_.userId=user4_1_.userId left outer join User user5_ on account1_.secondaryContactId=user5_.userId left outer join UserRole user5_1_ on user5_.userId=user5_1_.userId left outer join RequesterAssociation associatio6_ on user0_.userId=associatio6_.userId left outer join BusinessFunction businessfu7_ on user0_.businessFunctionId=businessfu7_.businessFunctionId left outer join Designation designatio8_ on user0_.designationId=designatio8_.designationId left outer join User user9_ on user0_.reportingManagerId=user9_.userId left outer join UserRole user9_1_ on user9_.userId=user9_1_.userId left outer join Site site10_ on user9_.siteId=site10_.id left outer join Team team11_ on user9_.teamId=team11_.teamId left outer join Role role12_ on user9_1_.roleId=role12_.roleId where user0_.userId=?
+										select * from Role role0_ left outer join RoleType roletype1_ on role0_.roleTypeId=roletype1_.roleTypeId where role0_.roleId=?
+
+
+							-> com.kohia.galaxy.filter.AppAuthenticationIntrospectionFilter#doFilter
+								-> com.kohia.galaxy.service.SessionService#validateSession
+									-> com.kohia.galaxy.service.SessionService#getActiveSessionBySessionKey
+										-> com.kohia.galaxy.repository.SessionRepo#findBySessionKeyAndActiveTrue
+										USE data_us_412462193919115264
+										select * from Session session0_ where session0_.sessionKey=? and session0_.isActive=?
+										select * from User user0_ left outer join UserRole user0_1_ on user0_.userId=user0_1_.userId left outer join Account account1_ on user0_.accountId=account1_.accountId left outer join User user2_ on account1_.accountManagerId=user2_.userId left outer join UserRole user2_1_ on user2_.userId=user2_1_.userId left outer join Site site3_ on account1_.hqSiteId=site3_.id left outer join User user4_ on account1_.primaryContactId=user4_.userId left outer join UserRole user4_1_ on user4_.userId=user4_1_.userId left outer join User user5_ on account1_.secondaryContactId=user5_.userId left outer join UserRole user5_1_ on user5_.userId=user5_1_.userId left outer join RequesterAssociation associatio6_ on user0_.userId=associatio6_.userId left outer join BusinessFunction businessfu7_ on user0_.businessFunctionId=businessfu7_.businessFunctionId left outer join Designation designatio8_ on user0_.designationId=designatio8_.designationId left outer join User user9_ on user0_.reportingManagerId=user9_.userId left outer join UserRole user9_1_ on user9_.userId=user9_1_.userId left outer join Site site10_ on user9_.siteId=site10_.id left outer join Team team11_ on user9_.teamId=team11_.teamId left outer join Role role12_ on user9_1_.roleId=role12_.roleId where user0_.userId=?
+										select * from Role role0_ left outer join RoleType roletype1_ on role0_.roleTypeId=roletype1_.roleTypeId where role0_.roleId=?
+
+									-> com.kohia.galaxy.service.SessionService#saveSessionAccessDetail
+										-> com.kohia.galaxy.repository.redis.SessionAccessDetailRepo#save
+											-> com.kohia.galaxy.entity.redis.SessionAccessDetail#save
+												DEL sessionaccess:6044988889516720128-4258647886128472064
+												HMSET sessionaccess:6044988889516720128-4258647886128472064 _class ? tenantedSessionId ? lastAccessTime ?
+												SADD sessionaccess ?
+
+									-> com.kohia.galaxy.security#loadUserByUsername
+										-> com.kohia.galaxy.repository.UserRepo#findByEmailAndDeletedTime
+										USE data_us_412462193919115264
+										
+										select * from User user0_ left outer join UserRole user0_1_ on user0_.userId=user0_1_.userId where user0_.email=? and user0_.deletedTime=?
+										
+										select * from Account account0_ left outer join User user1_ on account0_.accountManagerId=user1_.userId left outer join UserRole user1_1_ on user1_.userId=user1_1_.userId left outer join Account account2_ on user1_.accountId=account2_.accountId left outer join RequesterAssociation associatio3_ on user1_.userId=associatio3_.userId left outer join BusinessFunction businessfu4_ on user1_.businessFunctionId=businessfu4_.businessFunctionId left outer join Designation designatio5_ on user1_.designationId=designatio5_.designationId left outer join User user6_ on user1_.reportingManagerId=user6_.userId left outer join UserRole user6_1_ on user6_.userId=user6_1_.userId left outer join Site site7_ on user1_.siteId=site7_.id left outer join Team team8_ on user1_.teamId=team8_.teamId left outer join Role role9_ on user1_1_.roleId=role9_.roleId left outer join Site site10_ on account0_.hqSiteId=site10_.id left outer join Account account11_ on site10_.accountId=account11_.accountId left outer join HolidayList holidaylis12_ on site10_.holidayListId=holidaylis12_.id left outer join User user13_ on account0_.primaryContactId=user13_.userId left outer join UserRole user13_1_ on user13_.userId=user13_1_.userId left outer join User user14_ on account0_.secondaryContactId=user14_.userId left outer join UserRole user14_1_ on user14_.userId=user14_1_.userId where account0_.accountId=?
+										
+										select * from Role role0_ left outer join RoleType roletype1_ on role0_.roleTypeId=roletype1_.roleTypeId where role0_.roleId=?
+										
+										select * from RequesterAssociation associatio0_ where associatio0_.userId=?
+
+
+								GET customer_portal_domains::6044988889516720128
+								GET cust_subscription::6044988889516720128
+
+								-> com.kohia.galaxy.commondb.repository.CustomerSubscriptionRepo#findByCustomerCustomerIdAndActiveAndSubscriptionType
+								select * from CustomerSubscription customersu0_ left outer join CustomerDetail customerde1_ on customersu0_.customerId=customerde1_.customerId where customerde1_.customerId=? and customersu0_.active=? and customersu0_.subscriptionType=?
+
+								-> com.kohia.galaxy.repository.AppSecurityConfigurationRepo#findAll
+								USE data_us_412462193919115264
+								select * from AppSecurityConfiguration appsecurit0_
+
+								GET customer_portal_domains::6044988889516720128
+								GET cust_subscription::6044988889516720128
+
+								-> com.kohia.galaxy.commondb.repository.CustomerSubscriptionRepo#findByCustomerCustomerIdAndActiveAndSubscriptionType
+								select * from CustomerSubscription customersu0_ left outer join CustomerDetail customerde1_ on customersu0_.customerId=customerde1_.customerId where customerde1_.customerId=? and customersu0_.active=? and customersu0_.subscriptionType=?
+
+								-> com.kohia.galaxy.repository.AppSecurityConfigurationRepo#findAll
+								USE data_us_412462193919115264
+								select * from AppSecurityConfiguration appsecurit0_
+
+
+								-> com.kohia.galaxy.security.GalaxyCsrfTokenRepository#loadToken
+								-> com.kohia.galaxy.security.GalaxyCustomRememberMeServices#getSession
+									-> com.kohia.galaxy.service.SessionService#getActiveSessionBySessionKey
+									-> com.kohia.galaxy.service.SessionService#getSessionEntity
+										
+										-> com.kohia.galaxy.repository.SessionRepo#getSessionEntity
+										USE data_us_412462193919115264
+										
+										select * from Session session0_ where session0_.sessionKey=?
+										
+										select * from User user0_ left outer join UserRole user0_1_ on user0_.userId=user0_1_.userId left outer join Account account1_ on user0_.accountId=account1_.accountId left outer join User user2_ on account1_.accountManagerId=user2_.userId left outer join UserRole user2_1_ on user2_.userId=user2_1_.userId left outer join Site site3_ on account1_.hqSiteId=site3_.id left outer join User user4_ on account1_.primaryContactId=user4_.userId left outer join UserRole user4_1_ on user4_.userId=user4_1_.userId left outer join User user5_ on account1_.secondaryContactId=user5_.userId left outer join UserRole user5_1_ on user5_.userId=user5_1_.userId left outer join RequesterAssociation associatio6_ on user0_.userId=associatio6_.userId left outer join BusinessFunction businessfu7_ on user0_.businessFunctionId=businessfu7_.businessFunctionId left outer join Designation designatio8_ on user0_.designationId=designatio8_.designationId left outer join User user9_ on user0_.reportingManagerId=user9_.userId left outer join UserRole user9_1_ on user9_.userId=user9_1_.userId left outer join Site site10_ on user9_.siteId=site10_.id left outer join Team team11_ on user9_.teamId=team11_.teamId left outer join Role role12_ on user9_1_.roleId=role12_.roleId where user0_.userId=?
+										
+										select * from Role role0_ left outer join RoleType roletype1_ on role0_.roleTypeId=roletype1_.roleTypeId where role0_.roleId=?
+
+								GET customer_portal_domains::6044988889516720128
+								GET cust_subscription::6044988889516720128
+
+								-> com.kohia.galaxy.commondb.repository.CustomerSubscriptionRepo#findByCustomerCustomerIdAndActiveAndSubscriptionType
+								select * from CustomerSubscription customersu0_ left outer join CustomerDetail customerde1_ on customersu0_.customerId=customerde1_.customerId where customerde1_.customerId=? and customersu0_.active=? and customersu0_.subscriptionType=?
+
+								-> com.kohia.galaxy.repository.AppSecurityConfigurationRepo#findAll
+								USE data_us_412462193919115264
+								select * from AppSecurityConfiguration appsecurit0_
+
+								GET customer_portal_domains::6044988889516720128
+								GET cust_subscription::6044988889516720128
+
+								-> com.kohia.galaxy.commondb.repository.CustomerSubscriptionRepo#findByCustomerCustomerIdAndActiveAndSubscriptionType
+								select * from CustomerSubscription customersu0_ left outer join CustomerDetail customerde1_ on customersu0_.customerId=customerde1_.customerId where customerde1_.customerId=? and customersu0_.active=? and customersu0_.subscriptionType=?
+
+								-> com.kohia.galaxy.repository.AppSecurityConfigurationRepo#findAll
+								USE data_us_412462193919115264
+								select * from AppSecurityConfiguration appsecurit0_
+
+								-> Actual Query
+									USE data_us_412462193919115264
+									select rolefeatur0_.value as col_0_0_ from RoleFeature rolefeatur0_ cross join UserRole userrole1_ where rolefeatur0_.roleId=userrole1_.roleId and rolefeatur0_.featureId=? and userrole1_.userId=?
+
+									select * from CustomerSubscription customersu0_ left outer join CustomerDetail customerde1_ on customersu0_.customerId=customerde1_.customerId where customerde1_.customerId=? and customersu0_.active=? and customersu0_.subscriptionType=?
+									select customfiel0_.id as id1_119_, customfiel0_.choices as choices2_119_, customfiel0_.columnName as columnna3_119_, customfiel0_.deletedTime as deletedt4_119_, customfiel0_.description as descript5_119_, customfiel0_.fieldCategory as fieldcat6_119_, customfiel0_.fieldOptions as fieldopt7_119_, customfiel0_.fieldType as fieldtyp8_119_, customfiel0_.inactiveFieldOptions as inactive9_119_, customfiel0_.isMandatory as ismanda10_119_, customfiel0_.label as label11_119_, customfiel0_.mandatoryOnClosure as mandato12_119_, customfiel0_.mandatoryOnCreate as mandato13_119_, customfiel0_.module as module14_119_, customfiel0_.showToClient as showtoc15_119_ from CustomField customfiel0_ where customfiel0_.module=? and (customfiel0_.fieldCategory in (?))
+									select apppropert0_.id as id1_21_, apppropert0_.name as name2_21_, apppropert0_.value as value3_21_ from AppProperties apppropert0_ where apppropert0_.name=?
+									select rolefeatur0_.value as col_0_0_ from RoleFeature rolefeatur0_ cross join UserRole userrole1_ where rolefeatur0_.roleId=userrole1_.roleId and rolefeatur0_.featureId=? and userrole1_.userId=?
+									GET entity_info::Client:6044988889516720128
+									GET entity_info::PrimaryContact:6044988889516720128
+									GET entity_info::SecondaryContact:6044988889516720128
+									GET entity_info::AccountManager:6044988889516720128
+									USE data_us_412462193919115264
+									select * from `Account` as `Client` left outer join User as `primaryContact` on `Client`.`primaryContactId` = `primaryContact`.`userId` left outer join User as `secondaryContact` on `Client`.`secondaryContactId` = `secondaryContact`.`userId` left outer join User as `accountManager` on `Client`.`accountManagerId` = `accountManager`.`userId` where (`Client`.`accountType` <> ? and `Client`.`accountType` = ? and (`Client`.`operationalStatus` <> ? or `Client`.`operationalStatus` is null)) limit ?
+									USE data_us_412462193919115264
+									select count(*) from `Account` as `Client` where (`Client`.`accountType` <> ? and `Client`.`accountType` = ? and (`Client`.`operationalStatus` <> ? or `Client`.`operationalStatus` is null))
+
+
+
+
+								GET customer_portal_domains::6044988889516720128
+								GET cust_subscription::6044988889516720128
+
+								-> com.kohia.galaxy.commondb.repository.CustomerSubscriptionRepo#findByCustomerCustomerIdAndActiveAndSubscriptionType
+								select * from CustomerSubscription customersu0_ left outer join CustomerDetail customerde1_ on customersu0_.customerId=customerde1_.customerId where customerde1_.customerId=? and customersu0_.active=? and customersu0_.subscriptionType=?
+

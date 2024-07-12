@@ -2,8 +2,7 @@ receivers:
   otlp:
     protocols:
       grpc:
-      http:
-
+      # http:
   filelog:
     start_at: beginning
     include:
@@ -15,6 +14,7 @@ receivers:
       scrapers:
         cpu:
         memory:
+
 exporters:
   coralogix:
     domain: "coralogix.in"
@@ -26,10 +26,14 @@ exporters:
 processors:
   batch:
   tail_sampling:
-    decision_wait: 10s
-    num_traces: 1000
+    decision_wait: 20s
     policies:
       [
+        {
+          name: latency-policy-2,
+          type: latency,
+          latency: { threshold_ms: 150 }
+        },
         {
           name: customer_id_policy,
           type: boolean_attribute,
@@ -49,8 +53,8 @@ service:
   pipelines:
     traces:
       receivers: [ otlp ]
-      # processors: [ tail_sampling ]
-      processors: [ batch ]
+      processors: [ tail_sampling ]
+      # processors: [ batch ]
       exporters: [ coralogix ]
     logs:
       receivers: [ filelog ]

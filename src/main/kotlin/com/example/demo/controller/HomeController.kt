@@ -1,22 +1,25 @@
 package com.example.demo.controller
 
-import com.example.demo.dto.AuthorDto
 import com.example.demo.dto.AuthorWithBooksDto
-import com.example.demo.dto.BookDto
 import com.example.demo.dto.BookWithAuthorDto
+import com.example.demo.job.SampleJob
 import com.example.demo.model.Book
 import com.example.demo.service.BookService
+import com.example.demo.service.RequestContext
+import org.quartz.JobBuilder
+import org.quartz.Scheduler
+import org.quartz.Trigger
+import org.quartz.TriggerBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.RestTemplate
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.*
+
 
 @RestController
 class HomeController {
@@ -24,6 +27,9 @@ class HomeController {
 
     @Autowired
     lateinit var bookService: BookService
+
+    @Autowired
+    lateinit var scheduler: Scheduler
 
     @Autowired
     lateinit var restTemplate: RestTemplate
@@ -61,13 +67,38 @@ class HomeController {
         return response;
     }
 
-    @GetMapping("/error")
-    fun error() {
-        throwError()
+//    @GetMapping("/error")
+//    fun errortest() {
+//        throw Exception("Test Exceptions");
+//    }
+
+    @GetMapping("/testjob")
+    fun testjob(@RequestParam name: String): String {
+        val job = JobBuilder.newJob(SampleJob::class.java)
+            .usingJobData("param", "value") // add a parameter
+            .usingJobData("name", name)
+            .build()
+
+        val afterFiveSeconds = Date.from(
+            LocalDateTime.now().plusSeconds(5)
+                .atZone(ZoneId.systemDefault()).toInstant()
+        )
+        val trigger: Trigger = TriggerBuilder.newTrigger()
+            .startAt(afterFiveSeconds)
+            .build()
+
+        scheduler.scheduleJob(job, trigger)
+        return "Ok"
     }
 
-    fun throwError() {
-        throw Exception("Test Exceptions");
+    @GetMapping("/test-context")
+    fun testContext(@RequestParam endPoint: String): Map<String, String> {
+        if (endPoint != "hello") {
+            RequestContext.setEndPoint(endPoint)
+        }
+        return mapOf(
+            "thread" to Thread.currentThread().name,
+            "endPoint" to RequestContext.getEndPoint()
+        )
     }
-
 }

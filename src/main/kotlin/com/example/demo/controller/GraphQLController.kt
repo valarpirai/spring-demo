@@ -52,19 +52,18 @@ class GraphQLController {
 
     @MutationMapping
     fun createBook(@Argument input: Book): BookWithAuthorDto? {
-
         return bookService.createBook(input);
     }
 
-    @WithSpan
-    @SchemaMapping
-    fun author(book: Book): Author? {
-        return book.author?.id?.let { authorRepository.findById(it).get() }
-    }
+//    @WithSpan
+//    @SchemaMapping
+//    fun author(book: Book): Author? {
+//        return book.author?.id?.let { authorRepository.findById(it).get() }
+//    }
 
-    @WithSpan
-    @SchemaMapping
-    fun books(author: Author): List<Book>? {
-        return author.id?.let { bookRepository.findByAuthorId(it) }
-    }
+//    @WithSpan
+//    @SchemaMapping
+//    fun books(author: Author): List<Book>? {
+//        return author.id?.let { bookRepository.findByAuthorId(it) }
+//    }
 }

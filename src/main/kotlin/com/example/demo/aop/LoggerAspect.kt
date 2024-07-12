@@ -26,6 +26,8 @@ class LoggerAspect {
 
     @Before("@annotation(org.springframework.web.bind.annotation.GetMapping)")
     fun before(jointPoint: JoinPoint) {
+        val rootSpan = LocalRootSpan.current()
+        rootSpan.setAttribute("app.force_sample", true)
         logger.info("Before all aspects");
     }
 
@@ -34,8 +36,10 @@ class LoggerAspect {
         val signature = joinPoint.signature as CodeSignature
 
         val rootSpan = LocalRootSpan.current()
+        rootSpan.setAttribute("app.force_sample", true)
         rootSpan.setAttribute("endPoint", signature.name)
         rootSpan.setAttribute("tenantId", "1234")
+
 
         val span: Span = Span.current()
         val context = span.spanContext
