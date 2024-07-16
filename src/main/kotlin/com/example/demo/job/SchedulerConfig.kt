@@ -20,7 +20,6 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean
 import java.util.*
 import javax.sql.DataSource
 
-
 @Configuration
 @EnableAutoConfiguration
 class SchedulerConfig {

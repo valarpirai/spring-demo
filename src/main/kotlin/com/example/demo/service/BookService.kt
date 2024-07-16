@@ -15,6 +15,7 @@ import org.modelmapper.ModelMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -71,15 +72,19 @@ class BookService {
     }
 
     @WithSpan
-    fun getBookById(bookId: Long): Any? {
-        val optionalBook = bookRepository.findById(bookId)
-        if (optionalBook.isPresent) {
-            return convertToDto(optionalBook.get(), false)
-        }
-        return null;
+    @Cacheable(cacheNames = ["books"], key="#bookId", unless = "#result==null")
+    fun getBookById(bookId: Long): Book? {
+        val book = bookRepository.findByIdAndPageCount(bookId, 720);
+//        val optionalBook = bookRepository.findById(bookId)
+//        if (optionalBook.isPresent) {
+//            optionalBook.get().author
+//            return convertToDto(optionalBook.get(), true)
+//        }
+        return book;
     }
 
     @WithSpan
+    @Cacheable("books")
     fun getBooks(page: Int = 0, pageSize: Int = 5): MutableList<BookWithAuthorDto> {
         val books = mutableListOf<BookWithAuthorDto>()
         val paginated: Pageable = PageRequest.of(page, pageSize);

@@ -1,25 +1,27 @@
 package com.example.demo.dto
 
-class AuthorDto {
+import java.io.Serializable
+
+class AuthorDto: Serializable {
     var id: Long? = null
     lateinit var firstName: String
     lateinit var lastName: String
 }
 
-class AuthorWithBooksDto {
+class AuthorWithBooksDto: Serializable {
     var id: Long? = null
     lateinit var firstName: String
     lateinit var lastName: String
     var books: Set<BookDto>? = null
 }
 
-class BookDto {
+class BookDto: Serializable {
     var id: Long? = null
     lateinit var name: String
     var pageCount: Int? = null
 }
 
-class BookWithAuthorDto {
+class BookWithAuthorDto: Serializable {
     var id: Long? = null
     lateinit var name: String
     var pageCount: Int? = null

@@ -49,6 +49,11 @@ class HomeController {
         return bookService.getBooks(page, pageSize);
     }
 
+    @GetMapping("/book")
+    fun books(@RequestParam bookId: Long): Book? {
+        return bookService.getBookById(bookId);
+    }
+
     @GetMapping("/booksWithCursor")
     fun booksWithCursor(@RequestParam(required = false, defaultValue = "10") first: Int, @RequestParam(required = false, defaultValue = "") cursor: String): Map<String, Any> {
         return bookService.getBooksCursor(first, cursor)

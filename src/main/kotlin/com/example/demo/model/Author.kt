@@ -1,9 +1,10 @@
 package com.example.demo.model
 
+import java.io.Serializable
 import javax.persistence.*
 
 @Entity
-class Author {
+class Author: Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null;

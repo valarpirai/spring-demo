@@ -8,6 +8,7 @@ export OTEL_SERVICE_NAME="Demo-Application"
 export OTEL_TRACES_EXPORTER="otlp"
 export OTEL_EXPORTER_OTLP_TRACES_PROTOCOL="grpc"
 export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4317"
+
 export OTEL_RESOURCE_ATTRIBUTES="service.name=Demo-Application,application.name=Demo-Application,api.name=Demo-Application,cx.application.name=Demo-Application,cx.subsystem.name=Graphql-Application"
 
 export OTEL_RESOURCE_ATTRIBUTES="service.name=Galaxy-Application,application.name=accounts-web,api.name=Accounts-web-Application,cx.application.name=accounts-web,cx.subsystem.name=Accounts-web-Application"

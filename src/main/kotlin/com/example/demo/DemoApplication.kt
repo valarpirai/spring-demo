@@ -1,23 +1,21 @@
 package com.example.demo
 
-import com.example.demo.service.BookService
 import com.launchdarkly.sdk.server.LDClient
-import io.opentelemetry.instrumentation.api.instrumenter.LocalRootSpan
 import org.modelmapper.ModelMapper
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.scheduling.annotation.EnableScheduling
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.web.client.RestTemplate
-import java.util.*
+import java.time.LocalDate
 
 
 @SpringBootApplication
 @EnableScheduling
 class DemoApplication {
+
+	val date: LocalDate? = null
 
 	@Bean
 	fun modelMapper(): ModelMapper {

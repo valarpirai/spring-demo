@@ -1,2 +1,3 @@
 rootProject.name = "demo"
-include("otel-extension")
+include("shadow-local")
+

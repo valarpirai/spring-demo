@@ -24,6 +24,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-aop")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.springframework.boot:spring-boot-starter-data-redis")
+	implementation("org.springframework.boot:spring-boot-starter-cache")
 	runtimeOnly("com.mysql:mysql-connector-j:8.3.0")
 	implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2021.0.3"))
 	implementation("org.springframework.cloud:spring-cloud-starter-sleuth")
@@ -45,6 +47,9 @@ dependencies {
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testImplementation("com.graphql-java-kickstart:graphql-spring-boot-starter-test:6.0.0")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+	implementation(project("path" to "shadow-local", "configuration" to "shadow"))
+
 }
 
 //kotlin {
