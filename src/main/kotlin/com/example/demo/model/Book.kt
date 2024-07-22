@@ -12,7 +12,9 @@ class Book : Serializable {
 
     var pageCount: Int? = null;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "author_id")
+//    var authorId: Long? = null
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id")
     var author: Author? = null;
 }

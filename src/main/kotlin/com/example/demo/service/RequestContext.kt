@@ -18,7 +18,7 @@ object RequestContext : ThreadLocal<MutableMap<String, Any?>>() {
         context[LOG_REQUEST_END_POINT] = endPoint
     }
 
-    fun clear() {
-        get().clear()
-    }
+//    fun clear() {
+//        get().clear()
+//    }
 }

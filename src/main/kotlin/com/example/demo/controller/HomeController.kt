@@ -45,7 +45,7 @@ class HomeController {
     }
 
     @GetMapping("/books")
-    fun books(@RequestParam(required = false, defaultValue = "0") page: Int, @RequestParam(required = false, defaultValue = "5") pageSize: Int): MutableList<BookWithAuthorDto> {
+    fun books(@RequestParam(required = false, defaultValue = "0") page: Int, @RequestParam(required = false, defaultValue = "50") pageSize: Int): MutableList<BookWithAuthorDto> {
         return bookService.getBooks(page, pageSize);
     }
 

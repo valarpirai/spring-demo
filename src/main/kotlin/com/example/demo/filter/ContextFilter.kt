@@ -15,6 +15,6 @@ class ContextFilter: OncePerRequestFilter() {
         filterChain: FilterChain
     ) {
         filterChain.doFilter(request, response)
-        RequestContext.clear()
+        RequestContext.remove()
     }
 }

@@ -53,8 +53,8 @@ service:
   pipelines:
     traces:
       receivers: [ otlp ]
-      processors: [ tail_sampling ]
-      # processors: [ batch ]
+      # processors: [ tail_sampling ]
+      processors: [ batch ]
       exporters: [ coralogix ]
     logs:
       receivers: [ filelog ]

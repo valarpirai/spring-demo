@@ -15,6 +15,7 @@ import org.modelmapper.ModelMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
@@ -61,7 +62,7 @@ class BookService {
         if (auth != null) {
             book.author = auth
         } else {
-            book.author = authorRepository.save(book.author!!);
+            book.author = book.author?.let { authorRepository.save(it) };
         }
 
         val dto = convertToDto(bookRepository.save(book), true)
@@ -84,7 +85,7 @@ class BookService {
     }
 
     @WithSpan
-    @Cacheable("books")
+//    @Cacheable("books")
     fun getBooks(page: Int = 0, pageSize: Int = 5): MutableList<BookWithAuthorDto> {
         val books = mutableListOf<BookWithAuthorDto>()
         val paginated: Pageable = PageRequest.of(page, pageSize);

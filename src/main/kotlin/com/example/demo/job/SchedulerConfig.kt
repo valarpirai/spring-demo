@@ -10,6 +10,7 @@ import org.quartz.Scheduler
 import org.quartz.SchedulerException
 import org.quartz.Trigger
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.quartz.QuartzDataSource
 import org.springframework.boot.jdbc.DataSourceBuilder
@@ -29,6 +30,9 @@ class SchedulerConfig {
     @Autowired
     lateinit var featureFlagService: FeatureFlagService
 
+    @Value("#{'\${app.base.domainNames}'.split(',')}")
+    private lateinit var baseDomains: List<String>
+
     @Bean
     @Throws(SchedulerException::class)
     fun scheduler(factory: SchedulerFactoryBean): Scheduler {
@@ -41,7 +45,8 @@ class SchedulerConfig {
     fun everyTenSeconds() {
         val rootSpan = LocalRootSpan.current()
         rootSpan.setAttribute("app.force_sample", true)
-        println("Periodic task: " + Date())
+
+        println("Periodic task: ${baseDomains.size} $baseDomains")
 //        bookService.getBooks()
 
         println(featureFlagService.getFeatureFlagValue("account-numbers", JsonObject()))
