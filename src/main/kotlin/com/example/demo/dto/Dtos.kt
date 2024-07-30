@@ -11,7 +11,7 @@ class AuthorDto: Serializable {
 class AuthorWithBooksDto: Serializable {
     var id: Long? = null
     lateinit var firstName: String
-    lateinit var lastName: String
+    var lastName: String? = null
     var books: Set<BookDto>? = null
 }
 

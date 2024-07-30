@@ -2,7 +2,7 @@ receivers:
   otlp:
     protocols:
       grpc:
-      # http:
+      http:
   filelog:
     start_at: beginning
     include:

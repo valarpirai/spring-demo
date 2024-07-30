@@ -6,6 +6,7 @@ import com.example.demo.job.SampleJob
 import com.example.demo.model.Book
 import com.example.demo.service.BookService
 import com.example.demo.service.RequestContext
+import org.disposableemail.DisposableEmail
 import org.quartz.JobBuilder
 import org.quartz.Scheduler
 import org.quartz.Trigger
@@ -42,6 +43,11 @@ class HomeController {
     @GetMapping("/authors")
     fun authors(): MutableList<AuthorWithBooksDto> {
         return bookService.getAllAuthorsWithBookDetails()
+    }
+
+    @GetMapping("/search-author")
+    fun searchAuthor(@RequestParam name: String): MutableList<AuthorWithBooksDto> {
+        return bookService.searchAuthorByName(name);
     }
 
     @GetMapping("/books")
@@ -105,5 +111,17 @@ class HomeController {
             "thread" to Thread.currentThread().name,
             "endPoint" to RequestContext.getEndPoint()
         )
+    }
+
+    @GetMapping("/disposable")
+    fun disposableEmail(@RequestParam domain: String): String {
+
+        return DisposableEmail.isDisposable(domain).toString()
+    }
+
+    @GetMapping("/refreshDomains")
+    fun refreshDisposableEmail(): String {
+        DisposableEmail.refreshDisposableDomains()
+        return "Success"
     }
 }

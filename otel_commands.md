@@ -2,12 +2,16 @@ docker pull otel/opentelemetry-collector-contrib
 
 docker run -d --rm -v ~/dev/demo/config.yaml:/etc/otelcol-contrib/config.yaml -v ~/dev/demo/example.log:/example.log -p 4317:4317 otel/opentelemetry-collector-contrib
 
-docker run -d --rm -v ~/dev/demo/config.yaml:/etc/otelcol-contrib/config.yaml -v ~/dev/demo/example.log:/example.log -p 4317:4317 --cpus=".2" --memory=2000m otel/opentelemetry-collector-contrib
+docker run -d --rm -v ~/dev/demo/config.yaml:/etc/otelcol-contrib/config.yaml -v ~/dev/demo/example.log:/example.log -p 4317:4317 -p 4318:4318 --cpus=".2" --memory=2000m otel/opentelemetry-collector-contrib
 
 export OTEL_SERVICE_NAME="Demo-Application"
 export OTEL_TRACES_EXPORTER="otlp"
 export OTEL_EXPORTER_OTLP_TRACES_PROTOCOL="grpc"
 export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4317"
+
+export OTEL_EXPORTER_OTLP_TRACES_PROTOCOL="http/protobuf"
+export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4318"
+export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT="http://localhost:4318/v1/traces"
 
 export OTEL_RESOURCE_ATTRIBUTES="service.name=Demo-Application,application.name=Demo-Application,api.name=Demo-Application,cx.application.name=Demo-Application,cx.subsystem.name=Graphql-Application"
 

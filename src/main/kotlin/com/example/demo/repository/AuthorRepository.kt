@@ -10,6 +10,8 @@ interface AuthorRepository : CrudRepository<Author, Long> {
     fun save(author: Author): Author
     fun findByFirstNameAndLastName(firstName: String, lastName: String): Author?
 
-//    @Query(value = "SELECT a.id, a.firstName, a.lastName from Author a where first_name = :firstName AND last_name = :lastName")
+    fun findByFirstNameAndLastNameIsNotNull(firstName: String): List<Author>
+
+//    @Query(value = "SELECT a.id as id, a.firstName as firstName, a.lastName as lastName from Author a where first_name = :firstName AND last_name = :lastName")
 //    fun findByFirstNameAndLastName(firstName: String, lastName: String): Author?
 }

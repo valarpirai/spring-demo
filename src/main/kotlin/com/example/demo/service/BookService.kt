@@ -145,6 +145,19 @@ class BookService {
         return authorDTOs;
     }
 
+    fun searchAuthorByName(name: String): MutableList<AuthorWithBooksDto> {
+        val authors = authorRepository.findByFirstNameAndLastNameIsNotNull(name)
+        logger.info(authors.count().toString())
+        val authorDTOs = mutableListOf<AuthorWithBooksDto>()
+
+        for (author in authors) {
+            val dto = convertToDto(author, true)
+            if (dto is AuthorWithBooksDto)
+                authorDTOs.add(dto)
+        }
+        return authorDTOs;
+    }
+
     @WithSpan
     fun getAuthorById(authorId: Long): Author {
         return authorRepository.findById(authorId).get()

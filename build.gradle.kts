@@ -18,6 +18,7 @@ java {
 
 repositories {
 	mavenCentral()
+	mavenLocal()
 }
 
 dependencies {
@@ -35,6 +36,8 @@ dependencies {
 
 	implementation("com.launchdarkly:launchdarkly-java-server-sdk:7.0.0")
 
+//	implementation("org.disposableemail:org.disposable:0.0.1")
+	implementation(project("disposable-email"))
 
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 
@@ -50,6 +53,8 @@ dependencies {
 
 	implementation(project("path" to "shadow-local", "configuration" to "shadow"))
 
+	testImplementation("org.mockito:mockito-core:2.19.0")
+	testImplementation("org.mockito:mockito-junit-jupiter:2.19.0")
 }
 
 //kotlin {
