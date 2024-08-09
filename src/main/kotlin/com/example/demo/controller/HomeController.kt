@@ -1,5 +1,6 @@
 package com.example.demo.controller
 
+import com.example.demo.annotations.MyInterceptor
 import com.example.demo.dto.AuthorWithBooksDto
 import com.example.demo.dto.BookWithAuthorDto
 import com.example.demo.job.SampleJob
@@ -114,14 +115,20 @@ class HomeController {
     }
 
     @GetMapping("/disposable")
-    fun disposableEmail(@RequestParam domain: String): String {
+    fun disposableEmail(@RequestParam domain: String): Map<String, Boolean> {
 
-        return DisposableEmail.isDisposable(domain).toString()
+        return DisposableEmail.getDomainDetails(domain)
     }
 
     @GetMapping("/refreshDomains")
     fun refreshDisposableEmail(): String {
         DisposableEmail.refreshDisposableDomains()
         return "Success"
+    }
+
+    @MyInterceptor
+    @GetMapping("/test-aop")
+    fun testAop(): Map<String, String> {
+        return mapOf("status" to "Success")
     }
 }

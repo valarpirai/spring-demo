@@ -18,7 +18,13 @@ java {
 
 repositories {
 	mavenCentral()
-	mavenLocal()
+	maven {
+		url = uri("https://maven.pkg.github.com/valarpirai/disposable-emails")
+		credentials {
+			username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+			password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+		}
+	}
 }
 
 dependencies {
@@ -36,8 +42,8 @@ dependencies {
 
 	implementation("com.launchdarkly:launchdarkly-java-server-sdk:7.0.0")
 
-//	implementation("org.disposableemail:org.disposable:0.0.1")
-	implementation(project("disposable-email"))
+	implementation("org.valarpirai:disposable-email:1.0.2")
+//	implementation(project("path" to "disposable-email", "configuration" to "shadow"))
 
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 
