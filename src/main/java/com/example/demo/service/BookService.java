@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.PagedResponse;
 import com.example.demo.model.Book;
 import com.example.demo.model.Review;
+import com.example.demo.model.ReviewWithBookId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -32,12 +34,16 @@ public class BookService {
     );
 
     // RowMapper for Review
-    private final RowMapper<Review> reviewRowMapper = (rs, rowNum) -> new Review(
-            rs.getLong("id"),
-            rs.getString("comment"),
-            rs.getInt("rating"),
-            null // Book reference set later in join query
-    );
+    private final RowMapper<ReviewWithBookId> reviewRowMapper = (rs, rowNum) -> {
+        Review review = new Review(
+                rs.getLong("id"),
+                rs.getString("comment"),
+                rs.getInt("rating"),
+                null // Book reference set later
+        );
+        Long bookId = rs.getLong("book_id");
+        return new ReviewWithBookId(review, bookId);
+    };
 
     // Create a Book
     @Transactional
@@ -53,10 +59,16 @@ public class BookService {
     // Create a Review and associate it with a Book
     @Transactional
     public Review createReview(Long bookId, Review review) {
+        // Verify book exists
+        String checkSql = "SELECT COUNT(*) FROM books WHERE id = ?";
+        Long count = jdbcTemplate.queryForObject(checkSql, Long.class, bookId);
+        if (count == 0) {
+            throw new IllegalArgumentException("Book with ID " + bookId + " does not exist");
+        }
+
         String sql = "INSERT INTO reviews (comment, rating, book_id) VALUES (?, ?, ?)";
         jdbcTemplate.update(sql, review.comment(), review.rating(), bookId);
 
-        // Retrieve generated ID
         Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
         return new Review(id, review.comment(), review.rating(), null);
     }
@@ -75,10 +87,11 @@ public class BookService {
 
         // Fetch Reviews
         String reviewSql = "SELECT * FROM reviews WHERE book_id = ?";
-        List<Review> reviews = jdbcTemplate.query(reviewSql, reviewRowMapper, bookId);
+        List<ReviewWithBookId> reviewWithBookIds = jdbcTemplate.query(reviewSql, reviewRowMapper, bookId);
 
-        // Set Book reference in Reviews and add to Book
-        reviews.forEach(review -> {
+        // Extract Reviews and set Book reference
+        reviewWithBookIds.forEach(wrapper -> {
+            Review review = wrapper.review();
             Review updatedReview = new Review(review.id(), review.comment(), review.rating(), book);
             book.addReview(updatedReview);
         });
@@ -101,37 +114,55 @@ public class BookService {
     }
 
     // Read all Books with their Reviews
-    public List<Book> findAllBooksWithReviews() {
-        // Fetch all Books
-        String bookSql = "SELECT * FROM books";
-        List<Book> books = jdbcTemplate.query(bookSql, bookRowMapper);
+    // Read all Books with their Reviews with pagination
+    public PagedResponse<Book> findAllBooksWithReviews(int page, int size) {
+        // Validate pagination parameters
+        if (page < 0 || size <= 0) {
+            throw new IllegalArgumentException("Page must be >= 0 and size must be > 0");
+        }
 
-        // Fetch all Reviews
-        String reviewSql = "SELECT * FROM reviews";
-        List<Review> reviews = jdbcTemplate.query(reviewSql, reviewRowMapper);
+        if (size > 100) {
+            size = 100;
+        }
 
-        // Group Reviews by book_id
-        Map<Long, List<Review>> reviewsByBookId = reviews.stream()
-                .collect(Collectors.groupingBy(review -> {
-                    try (ResultSet rs = jdbcTemplate.getDataSource().getConnection()
-                            .createStatement()
-                            .executeQuery("SELECT book_id FROM reviews WHERE id = " + review.id())) {
-                        rs.next();
-                        return rs.getLong("book_id");
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
-                }));
+        // Calculate offset
+        int offset = page * size;
 
-        // Associate Reviews with Books
-        books.forEach(book -> {
-            List<Review> bookReviews = reviewsByBookId.getOrDefault(book.id(), new ArrayList<>());
-            bookReviews.forEach(review -> {
-                Review updatedReview = new Review(review.id(), review.comment(), review.rating(), book);
-                book.addReview(updatedReview);
+        // Count total books
+        String countSql = "SELECT COUNT(*) FROM books";
+        long totalElements = jdbcTemplate.queryForObject(countSql, Long.class);
+
+        // Fetch paginated Books
+        String bookSql = "SELECT * FROM books ORDER BY id LIMIT ? OFFSET ?";
+        List<Book> books = jdbcTemplate.query(bookSql, bookRowMapper, size, offset);
+
+        // Fetch all Reviews for the fetched Books
+        if (!books.isEmpty()) {
+            String reviewSql = "SELECT * FROM reviews WHERE book_id IN (" +
+                    books.stream().map(book -> book.id().toString()).collect(Collectors.joining(",")) + ")";
+            List<ReviewWithBookId> reviewWithBookIds = jdbcTemplate.query(reviewSql, reviewRowMapper);
+
+            // Group Reviews by book_id
+            Map<Long, List<Review>> reviewsByBookId = reviewWithBookIds.stream()
+                    .collect(Collectors.groupingBy(
+                            ReviewWithBookId::bookId,
+                            Collectors.mapping(ReviewWithBookId::review, Collectors.toList())
+                    ));
+
+            // Associate Reviews with Books
+            books.forEach(book -> {
+                List<Review> bookReviews = reviewsByBookId.getOrDefault(book.id(), new ArrayList<>());
+                bookReviews.forEach(review -> {
+                    Review updatedReview = new Review(review.id(), review.comment(), review.rating(), book);
+                    book.addReview(updatedReview);
+                });
             });
-        });
+        }
 
-        return books;
+        // Calculate total pages
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+
+        // Return paginated response
+        return new PagedResponse<>(books, page, size, totalElements, totalPages);
     }
 }
