@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 
-//@ControllerAdvice
+@ControllerAdvice
 public class AppErrorHandler {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
