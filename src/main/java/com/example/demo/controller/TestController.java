@@ -14,9 +14,20 @@ public class TestController {
     @Autowired
     private BookService bookService;
 
-    @Transactional
     @GetMapping("/test-sleep")
     String testSleep(@RequestParam(defaultValue = "1") int seconds) {
+        try {
+            Thread.sleep(seconds * 1000L);
+            bookService.findAllBooksWithReviews(0, 10);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return "Done";
+    }
+
+    @Transactional
+    @GetMapping("/test-sleep-1")
+    String testSleepWithTransaction(@RequestParam(defaultValue = "1") int seconds) {
         try {
             Thread.sleep(seconds * 1000L);
             bookService.findAllBooksWithReviews(0, 10);
