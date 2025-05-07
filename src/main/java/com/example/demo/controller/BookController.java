@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.BookInputDto;
 import com.example.demo.dto.PagedResponse;
 import com.example.demo.dto.ReviewInputDto;
 import com.example.demo.model.Book;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
 
 @RestController
 public class BookController {
@@ -35,7 +38,8 @@ public class BookController {
     }
 
     @PostMapping("/books")
-    Book createBook(@RequestBody Book book) {
+    public Book createBook(@RequestBody BookInputDto bookDto) {
+        Book book = new Book(null, bookDto.title(), bookDto.author(), bookDto.publicationDate(), new ArrayList<>());
         return bookService.createBook(book);
     }
 
