@@ -20,10 +20,11 @@ public class TimedDataSource implements DataSource {
         this.delegate = dataSource;
     }
 
-    @Trace(operationName = "db.connection.acquire", resourceName = "HikariPool")
+    @Trace(operationName = "db.connection.acquire", resourceName = "HikariPool acquire")
     @Override
     public Connection getConnection() throws SQLException {
-        return delegate.getConnection();
+        Connection connection = delegate.getConnection();
+        return new InstrumentedDbConnection(connection, delegate.getPoolName());
     }
 
     // Delegate other DataSource methods
