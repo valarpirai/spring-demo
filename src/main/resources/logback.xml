@@ -1,25 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/base.xml" />
+    <property name="LOG_DIR" value="logs"/>
+    <property name="LOG_FILE" value="app"/>
 
-    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>logs/app.log</file>
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
-    </appender>
+    <include resource="org/springframework/boot/logging/logback/base.xml" />
+    
 
     <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
     </appender>
 
-    <appender name="FormattedText" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d %level [%t] [%logger] [%X{aws_request_id}] [%X{trace}] [%X{span}] [%X{parent_span}] [%X{customerId}] - %msg%n %replace(%exception){'\n','&#xd;'} %nopex</pattern>
+    <!-- File appender for Datadog Agent to tail -->
+    <appender name="DDFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/${LOG_FILE}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/${LOG_FILE}.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <!-- Include Datadog trace and span IDs -->
+            <customFields>{"ddsource":"java","service":"my-spring-boot-app"}</customFields>
+            <fieldNames>
+                <timestamp>timestamp</timestamp>
+                <message>message</message>
+                <level>level</level>
+                <logger>logger_name</logger>
+                <thread>thread_name</thread>
+            </fieldNames>
         </encoder>
     </appender>
 
     <root level="INFO">
-        <appender-ref ref="FILE"/>
-<!--        <appender-ref ref="JSON"/>-->
+<!--        <appender-ref ref="FILE"/>-->
+        <appender-ref ref="DDFile"/>
     </root>
 
 </configuration>
