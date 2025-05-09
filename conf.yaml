@@ -1,0 +1,6 @@
+logs:
+  - type: file
+    path: /logs/app.log
+    service: my-spring-boot-app
+    source: java
+

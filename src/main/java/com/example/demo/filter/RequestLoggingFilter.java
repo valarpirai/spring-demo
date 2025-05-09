@@ -12,7 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-public class LoggingFilter extends OncePerRequestFilter {
+public class RequestLoggingFilter extends OncePerRequestFilter {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override

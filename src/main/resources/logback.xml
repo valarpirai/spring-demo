@@ -4,7 +4,7 @@
     <property name="LOG_FILE" value="app"/>
 
     <include resource="org/springframework/boot/logging/logback/base.xml" />
-    
+
 
     <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
