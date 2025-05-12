@@ -19,12 +19,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "books")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,13 +42,6 @@ public class Book {
     @OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Review> reviews = new ArrayList<>();
-
-    // Constructor for creating new books
-    public Book(String title, String author, LocalDate publicationDate) {
-        this.title = title;
-        this.author = author;
-        this.publicationDate = publicationDate;
-    }
 
     public void addReview(Review review) {
         reviews.add(review);
