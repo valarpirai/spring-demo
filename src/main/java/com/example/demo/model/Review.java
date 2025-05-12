@@ -10,23 +10,28 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "reviews")
-public record Review(
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id,
+    Long id;
 
     @Column(nullable = false)
-    String comment,
+    String comment;
 
     @Column(nullable = false)
-    Integer rating,
+    Integer rating;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", nullable = false)
     @JsonBackReference
-    Book book
-) {}
-
+    Book book;
+}

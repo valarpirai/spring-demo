@@ -10,37 +10,46 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "books")
-public record Book(
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        Long id,
+public class Book {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-        @Column(nullable = false)
-        String title,
+    @Column(nullable = false)
+    private String title;
 
-        @Column(nullable = false)
-        String author,
+    @Column(nullable = false)
+    private String author;
 
-        @Column(name = "publication_date")
-        LocalDate publicationDate,
+    @Column(name = "publication_date")
+    private LocalDate publicationDate;
 
-        @OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-        @JsonManagedReference
-        List<Review> reviews
-) {
-    // Default constructor required by JPA
-    public Book {
-        reviews = new ArrayList<>();
+    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Review> reviews = new ArrayList<>();
+
+    // Constructor for creating new books
+    public Book(String title, String author, LocalDate publicationDate) {
+        this.title = title;
+        this.author = author;
+        this.publicationDate = publicationDate;
     }
 
-    // Helper method to add a review
     public void addReview(Review review) {
         reviews.add(review);
     }

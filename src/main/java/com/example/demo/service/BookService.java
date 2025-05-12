@@ -5,6 +5,8 @@ import com.example.demo.model.Book;
 import com.example.demo.model.Review;
 import com.example.demo.model.ReviewWithBookId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
@@ -21,8 +23,7 @@ import java.util.stream.Collectors;
 @Service
 public class BookService {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     // RowMapper for Book
     private final RowMapper<Book> bookRowMapper = (rs, rowNum) -> new Book(
@@ -45,15 +46,19 @@ public class BookService {
         return new ReviewWithBookId(review, bookId);
     };
 
+    public BookService(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     // Create a Book
     @Transactional
     public Book createBook(Book book) {
         String sql = "INSERT INTO books (title, author, publication_date) VALUES (?, ?, ?)";
-        jdbcTemplate.update(sql, book.title(), book.author(), book.publicationDate());
+        jdbcTemplate.update(sql, book.getTitle(), book.getAuthor(), book.getPublicationDate());
 
         // Retrieve generated ID
         Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
-        return new Book(id, book.title(), book.author(), book.publicationDate(), new ArrayList<>());
+        return new Book(id, book.getTitle(), book.getAuthor(), book.getPublicationDate(), new ArrayList<>());
     }
 
     // Create a Review and associate it with a Book
@@ -67,10 +72,10 @@ public class BookService {
         }
 
         String sql = "INSERT INTO reviews (comment, rating, book_id) VALUES (?, ?, ?)";
-        jdbcTemplate.update(sql, review.comment(), review.rating(), bookId);
+        jdbcTemplate.update(sql, review.getComment(), review.getRating(), bookId);
 
         Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
-        return new Review(id, review.comment(), review.rating(), null);
+        return new Review(id, review.getComment(), review.getRating(), null);
     }
 
     // Read a Book by ID
@@ -92,7 +97,7 @@ public class BookService {
         // Extract Reviews and set Book reference
         reviewWithBookIds.forEach(wrapper -> {
             Review review = wrapper.review();
-            Review updatedReview = new Review(review.id(), review.comment(), review.rating(), book);
+            Review updatedReview = new Review(review.getId(), review.getComment(), review.getRating(), book);
             book.addReview(updatedReview);
         });
 
@@ -102,8 +107,8 @@ public class BookService {
     // Update a Book
     public Book updateBook(Long id, Book updatedBook) {
         String sql = "UPDATE books SET title = ?, author = ?, publication_date = ? WHERE id = ?";
-        jdbcTemplate.update(sql, updatedBook.title(), updatedBook.author(), updatedBook.publicationDate(), id);
-        return new Book(id, updatedBook.title(), updatedBook.author(), updatedBook.publicationDate(), new ArrayList<>());
+        jdbcTemplate.update(sql, updatedBook.getTitle(), updatedBook.getAuthor(), updatedBook.getPublicationDate(), id);
+        return new Book(id, updatedBook.getTitle(), updatedBook.getAuthor(), updatedBook.getPublicationDate(), new ArrayList<>());
     }
 
     // Delete a Book (and its Reviews due to cascade)
@@ -139,7 +144,7 @@ public class BookService {
         // Fetch all Reviews for the fetched Books
         if (!books.isEmpty()) {
             String reviewSql = "SELECT * FROM reviews WHERE book_id IN (" +
-                    books.stream().map(book -> book.id().toString()).collect(Collectors.joining(",")) + ")";
+                    books.stream().map(book -> book.getId().toString()).collect(Collectors.joining(",")) + ")";
             List<ReviewWithBookId> reviewWithBookIds = jdbcTemplate.query(reviewSql, reviewRowMapper);
 
             // Group Reviews by book_id
@@ -151,9 +156,10 @@ public class BookService {
 
             // Associate Reviews with Books
             books.forEach(book -> {
-                List<Review> bookReviews = reviewsByBookId.getOrDefault(book.id(), new ArrayList<>());
+                List<Review> bookReviews = reviewsByBookId.getOrDefault(book.getId(), new ArrayList<>());
                 bookReviews.forEach(review -> {
-                    Review updatedReview = new Review(review.id(), review.comment(), review.rating(), book);
+                    Review updatedReview = new Review(review.getId(), review.getComment(), review.getRating(), null);
+                    updatedReview.setBook(book);
                     book.addReview(updatedReview);
                 });
             });

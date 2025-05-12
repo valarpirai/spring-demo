@@ -18,7 +18,6 @@ class BookControllerTest {
 
     @Test
     void getAllBooksWithReviews() {
-        get("/books")
     }
 
     @Test
