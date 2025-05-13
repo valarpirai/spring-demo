@@ -1,19 +1,16 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.PagedResponse;
+import com.example.demo.eventlisteners.MyCustomEvent;
 import com.example.demo.model.Book;
 import com.example.demo.model.Review;
 import com.example.demo.model.ReviewWithBookId;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +21,7 @@ import java.util.stream.Collectors;
 public class BookService {
 
     private final JdbcTemplate jdbcTemplate;
+    private final ApplicationEventPublisher eventPublisher;
 
     // RowMapper for Book
     private final RowMapper<Book> bookRowMapper = (rs, rowNum) -> new Book(
@@ -46,8 +44,9 @@ public class BookService {
         return new ReviewWithBookId(review, bookId);
     };
 
-    public BookService(JdbcTemplate jdbcTemplate) {
+    public BookService(JdbcTemplate jdbcTemplate, ApplicationEventPublisher eventPublisher) {
         this.jdbcTemplate = jdbcTemplate;
+        this.eventPublisher = eventPublisher;
     }
 
     // Create a Book
@@ -58,6 +57,7 @@ public class BookService {
 
         // Retrieve generated ID
         Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+        eventPublisher.publishEvent(new MyCustomEvent(this, "Transaction completed!"));
         return new Book(id, book.getTitle(), book.getAuthor(), book.getPublicationDate(), new ArrayList<>());
     }
 
