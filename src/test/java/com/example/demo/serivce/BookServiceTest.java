@@ -9,13 +9,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -31,7 +34,7 @@ public class BookServiceTest {
     BookService bookService;
 
     @Test
-    void test_getBookById() {
+    void test_getBookById_bookExists() {
         Long bookId = 1L;
         Book book = new Book(bookId, "Test book", "Valar", LocalDate.now(), null);
 
@@ -55,4 +58,17 @@ public class BookServiceTest {
         );
     }
 
+    @Test
+    void test_BookNotFound_throwsException() {
+        Long bookId = 1L;
+
+        when(jdbcTemplate.queryForObject(
+                eq("SELECT * FROM books WHERE id = ?"),
+                any(RowMapper.class),
+                eq(bookId))).thenReturn(null);
+
+        // Act & Asset
+        assertThrows(RuntimeException.class, () -> bookService.findBookById(bookId));
+
+    }
 }

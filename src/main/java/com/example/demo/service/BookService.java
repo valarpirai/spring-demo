@@ -81,7 +81,11 @@ public class BookService {
     // Read a Book by ID
     public Book findBookById(Long id) {
         String sql = "SELECT * FROM books WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, bookRowMapper, id);
+        Book book = jdbcTemplate.queryForObject(sql, bookRowMapper, id);
+        if (book == null) {
+            throw new RuntimeException("Book not found");
+        }
+        return book;
     }
 
     // Read a Book with its Reviews (join query)
