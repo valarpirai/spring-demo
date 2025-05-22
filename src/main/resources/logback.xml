@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <property name="LOG_DIR" value="logs"/>
-    <property name="LOG_FILE" value="app"/>
 
     <include resource="org/springframework/boot/logging/logback/base.xml" />
 
@@ -12,9 +11,9 @@
 
     <!-- File appender for Datadog Agent to tail -->
     <appender name="DDFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_DIR}/${LOG_FILE}.log</file>
+        <file>${LOG_DIR}/app.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_DIR}/${LOG_FILE}.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_DIR}/app.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
             <totalSizeCap>3GB</totalSizeCap>
         </rollingPolicy>
