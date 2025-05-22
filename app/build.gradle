@@ -22,9 +22,12 @@ configurations {
 
 repositories {
 	mavenCentral()
+	mavenLocal() // Required to find the parent in the local repository
 }
 
 dependencies {
+	implementation platform('com.example:custom-spring-boot-starter-parent:1.0.0')
+
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-jooq'
