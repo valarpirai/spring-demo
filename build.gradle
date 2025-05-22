@@ -1,0 +1,54 @@
+// build.gradle (root project: my-spring-boot-parent)
+
+plugins {
+    // Apply the Spring Boot plugin to manage Spring Boot dependencies
+    id 'org.springframework.boot' version '3.4.5' apply false
+    // Apply the Java plugin for Java projects
+    id 'java'
+}
+
+allprojects {
+    // Define repositories for all projects
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    // Apply plugins to all subprojects
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    // Java version configuration
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+
+    // Common dependencies for all subprojects
+    dependencies {
+        // Spring Boot Starter Web for REST APIs
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        // Spring Boot Starter Data JPA for database access
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+        implementation 'com.zaxxer:HikariCP:4.0.3'
+
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+
+        implementation 'net.logstash.logback:logstash-logback-encoder:8.1'
+        implementation 'ch.qos.logback:logback-classic:1.5.18'
+
+        // Spring Boot Starter Test for testing
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+        // Micrometer for Datadog
+        runtimeOnly 'io.micrometer:micrometer-registry-datadog'
+        // Datadog Tracing
+        implementation 'com.datadoghq:dd-trace-api:1.48.0' // Use the latest version
+    }
+
+    // Optional: Configure test tasks
+    test {
+        useJUnitPlatform()
+    }
+}

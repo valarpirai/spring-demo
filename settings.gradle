@@ -1,9 +1,3 @@
-rootProject.name = 'demo'
-include 'app'
+rootProject.name = 'my-spring-boot-parent'
 
-dependencyResolutionManagement {
-    repositories {
-        mavenCentral()
-        mavenLocal() // Required to find the parent in the local repository
-    }
-}
+include 'app'
