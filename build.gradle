@@ -1,19 +1,49 @@
 plugins {
     id 'java'
+    id 'maven-publish'
+    id 'org.springframework.boot' version '3.4.5' apply false
 }
 
 group = 'com.example'
-version = '1.0-SNAPSHOT'
+version = '1.0.0'
 
-repositories {
-    mavenCentral()
+allprojects {
+    repositories {
+        mavenCentral()
+    }
 }
 
-dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
-test {
-    useJUnitPlatform()
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.boot:spring-boot-dependencies:3.4.5"
+        }
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.example'
+            artifactId = 'custom-spring-boot-starter-parent'
+            version = '1.0.0'
+            pom.packaging = 'pom'
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
 }
