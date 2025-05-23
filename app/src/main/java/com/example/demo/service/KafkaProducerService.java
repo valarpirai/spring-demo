@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import lombok.RequiredArgsConstructor;
+import com.example.demo.dto.MessageContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +13,13 @@ public class KafkaProducerService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private KafkaTemplate<String, MessageContext> kafkaTemplate;
 
     @Value("${spring.kafka.consumer.topic}")
     private String kafkaTopic;
 
-    public void sendMessage(String message) {
-        kafkaTemplate.send(kafkaTopic, message);
+    public void sendMessage(MessageContext message) {
+        kafkaTemplate.send(kafkaTopic, message.getId(), message);
         logger.info("Message sent on Topic {} : {}", kafkaTopic, message);
     }
 }
