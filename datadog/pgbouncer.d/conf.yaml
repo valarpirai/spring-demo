@@ -1,0 +1,7 @@
+init_config:
+
+instances:
+  ## @param database_url - string - required
+  ## `database_url` parameter should point to PgBouncer stats database url (ie. "pgbouncer")
+  #
+  - database_url: "postgresql://datadog:ifjDfdisoD2S@pgbouncer:5432/rambo?sslmode=allow"

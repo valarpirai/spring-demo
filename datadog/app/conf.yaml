@@ -1,0 +1,5 @@
+logs:
+  - type: file
+    path: /logs/application.log
+    service: demo_api_server
+    source: java
