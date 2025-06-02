@@ -45,6 +45,5 @@ dependencies {
 }
 
 bootRun {
-	jvmArgs = ['-Xmx100m', '-XX:MaxDirectMemorySize=32m', '-XX:+HeapDumpOnOutOfMemoryError', '-XX:HeapDumpPath=build/dump.hprof']
+	jvmArgs = ['-Xmx100m', '-XX:MaxDirectMemorySize=32m', '-XX:+HeapDumpOnOutOfMemoryError', '-XX:HeapDumpPath=build/dump.hprof', '-XX:+PrintFlagsFinal']
 }
-
