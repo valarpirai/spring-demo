@@ -43,3 +43,8 @@ dependencies {
 	testImplementation 'org.testcontainers:testcontainers'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
+
+bootRun {
+	jvmArgs = ['-Xmx100m', '-XX:MaxDirectMemorySize=32m', '-XX:+HeapDumpOnOutOfMemoryError', '-XX:HeapDumpPath=build/dump.hprof']
+}
+
