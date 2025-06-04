@@ -39,7 +39,7 @@ public class BookController {
 
     @PostMapping("/books")
     public Book createBook(@RequestBody BookInputDto bookDto) {
-        Book book = new Book(null, bookDto.title(), bookDto.author(), bookDto.publicationDate(), new ArrayList<>());
+        Book book = new Book(null, bookDto.title(), bookDto.author(), bookDto.publicationDate(), 1L, new ArrayList<>());
         return bookService.createBook(book);
     }
 

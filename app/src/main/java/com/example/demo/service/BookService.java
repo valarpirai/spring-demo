@@ -5,6 +5,11 @@ import com.example.demo.eventlisteners.MyCustomEvent;
 import com.example.demo.model.Book;
 import com.example.demo.model.Review;
 import com.example.demo.model.ReviewWithBookId;
+import com.example.demo.repository.BookRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -15,13 +20,16 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class BookService {
-
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final JdbcTemplate jdbcTemplate;
     private final ApplicationEventPublisher eventPublisher;
+    private final BookRepository bookRepository;
 
     // RowMapper for Book
     private final RowMapper<Book> bookRowMapper = (rs, rowNum) -> new Book(
@@ -29,6 +37,7 @@ public class BookService {
             rs.getString("title"),
             rs.getString("author"),
             rs.getObject("publication_date", LocalDate.class),
+            (Long) rs.getObject("version"),
             new ArrayList<>()
     );
 
@@ -44,21 +53,22 @@ public class BookService {
         return new ReviewWithBookId(review, bookId);
     };
 
-    public BookService(JdbcTemplate jdbcTemplate, ApplicationEventPublisher eventPublisher) {
+    public BookService(JdbcTemplate jdbcTemplate, ApplicationEventPublisher eventPublisher, BookRepository bookRepository) {
         this.jdbcTemplate = jdbcTemplate;
         this.eventPublisher = eventPublisher;
+        this.bookRepository = bookRepository;
     }
 
     // Create a Book
     @Transactional
     public Book createBook(Book book) {
-        String sql = "INSERT INTO books (title, author, publication_date) VALUES (?, ?, ?)";
-        jdbcTemplate.update(sql, book.getTitle(), book.getAuthor(), book.getPublicationDate());
+        String sql = "INSERT INTO books (title, author, publication_date, version) VALUES (?, ?, ?, ?)";
+        jdbcTemplate.update(sql, book.getTitle(), book.getAuthor(), book.getPublicationDate(), book.getVersion());
 
         // Retrieve generated ID
         Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
         eventPublisher.publishEvent(new MyCustomEvent(this, "Transaction completed!"));
-        return new Book(id, book.getTitle(), book.getAuthor(), book.getPublicationDate(), new ArrayList<>());
+        return new Book(id, book.getTitle(), book.getAuthor(), book.getPublicationDate(), 1L, new ArrayList<>());
     }
 
     // Create a Review and associate it with a Book
@@ -88,23 +98,10 @@ public class BookService {
         return book;
     }
 
-    // Read a Book with its Reviews (join query)
+    @Transactional
     public Book findBookWithReviews(Long bookId) {
-        // Fetch Book
-        String bookSql = "SELECT * FROM books WHERE id = ?";
-        Book book = jdbcTemplate.queryForObject(bookSql, bookRowMapper, bookId);
-
-        // Fetch Reviews
-        String reviewSql = "SELECT * FROM reviews WHERE book_id = ?";
-        List<ReviewWithBookId> reviewWithBookIds = jdbcTemplate.query(reviewSql, reviewRowMapper, bookId);
-
-        // Extract Reviews and set Book reference
-        reviewWithBookIds.forEach(wrapper -> {
-            Review review = wrapper.review();
-            Review updatedReview = new Review(review.getId(), review.getComment(), review.getRating(), book);
-            book.addReview(updatedReview);
-        });
-
+        Book book = bookRepository.findWithLockingById(bookId).orElseThrow();
+        Hibernate.initialize(book.getReviews()); // Force initialization
         return book;
     }
 
@@ -112,7 +109,7 @@ public class BookService {
     public Book updateBook(Long id, Book updatedBook) {
         String sql = "UPDATE books SET title = ?, author = ?, publication_date = ? WHERE id = ?";
         jdbcTemplate.update(sql, updatedBook.getTitle(), updatedBook.getAuthor(), updatedBook.getPublicationDate(), id);
-        return new Book(id, updatedBook.getTitle(), updatedBook.getAuthor(), updatedBook.getPublicationDate(), new ArrayList<>());
+        return new Book(id, updatedBook.getTitle(), updatedBook.getAuthor(), updatedBook.getPublicationDate(), 1L, new ArrayList<>());
     }
 
     // Delete a Book (and its Reviews due to cascade)

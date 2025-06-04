@@ -104,7 +104,33 @@ services:
       - ./pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt:ro
       - ./pgbouncer/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini:ro
 
+  localstack:
+    container_name: localstack_main
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566" # LocalStack gateway
+      - "4510-4559:4510-4559" # External services port range
+      - "8080:8080" # Web dashboard port
+    environment:
+      # - SERVICES=s3,lambda,dynamodb # Enable desired services
+      - DEBUG=1
+      - AWS_DEFAULT_REGION=us-east-1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - ACTIVATE_PRO=0 # Set to 1 if using LocalStack Pro
+      - EXTRA_CORS_ALLOWED_ORIGINS=https://app.localstack.cloud
+      - LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY:-} # Optional: Add your LocalStack Pro API key
+    volumes:
+      - localstack-data:/var/lib/localstack
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - localstack-network
+
+networks:
+  localstack-network:
+    driver: bridge
+
 volumes:
   mysql-data:
   redis_data:
   pg-data:
+  localstack-data:
