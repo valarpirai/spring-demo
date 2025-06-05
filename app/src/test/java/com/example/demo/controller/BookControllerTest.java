@@ -34,7 +34,7 @@ class BookControllerTest {
     void getBookById() throws Exception {
         // Arrange
         Long bookId = 1L;
-        Book book = new Book(bookId, "Test book", "Valar", LocalDate.now(), null);
+        Book book = new Book(bookId, "Test book", "Valar", LocalDate.now(), 1L, null);
 
         when(bookService.findBookWithReviews(eq(bookId))).thenReturn(book);
 

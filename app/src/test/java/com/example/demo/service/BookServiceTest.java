@@ -31,7 +31,7 @@ public class BookServiceTest {
     @Test
     void test_getBookById_bookExists() {
         Long bookId = 1L;
-        Book book = new Book(bookId, "Test book", "Valar", LocalDate.now(), null);
+        Book book = new Book(bookId, "Test book", "Valar", LocalDate.now(), 1L, null);
 
         when(jdbcTemplate.queryForObject(
                 eq("SELECT * FROM books WHERE id = ?"),
