@@ -13,7 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class KafkaProducerController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired private KafkaProducerService producerService;
+    private final KafkaProducerService producerService;
+
+    public KafkaProducerController(KafkaProducerService producerService) {
+        this.producerService = producerService;
+    }
 
     @PostMapping("/send")
     public String produceKafkaMessage(@RequestBody MessageContext message) {

@@ -16,8 +16,6 @@ public class DatabaseConnectionAspect {
 
     private static final Logger logger = LoggerFactory.getLogger(DatabaseConnectionAspect.class);
 
-    @Autowired private HikariDataSource dataSource;
-
     private long startTime;
 
     @Before("execution(* javax.sql.DataSource.getConnection(..))")

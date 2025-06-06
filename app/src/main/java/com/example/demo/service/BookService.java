@@ -93,7 +93,7 @@ public class BookService {
         // Verify book exists
         String checkSql = "SELECT COUNT(*) FROM books WHERE id = ?";
         Long count = jdbcTemplate.queryForObject(checkSql, Long.class, bookId);
-        if (count == 0) {
+        if (count == null || count == 0) {
             throw new IllegalArgumentException("Book with ID " + bookId + " does not exist");
         }
 

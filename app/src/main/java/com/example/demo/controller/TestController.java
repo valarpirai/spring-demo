@@ -17,15 +17,20 @@ public class TestController {
 
     private List<byte[]> memoryHog = new ArrayList<>();
 
-    @Autowired private BookService bookService;
+    private final BookService bookService;
+
+    public TestController(BookService bookService) {
+        this.bookService = bookService;
+    }
+
 
     @GetMapping("/test-sleep")
-    String testSleep(@RequestParam(defaultValue = "1") int seconds) {
+    String testSleep(@RequestParam(defaultValue = "1") int seconds) throws InterruptedException {
         try {
             Thread.sleep(seconds * 1000L);
             bookService.findAllBooksWithReviews(0, 10);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            throw e;
         }
         return "Done";
     }
@@ -33,6 +38,7 @@ public class TestController {
     @GetMapping("/trigger-oom")
     String outOfMemoryTest() {
         try {
+            //NOSONAR
             while (true) {
                 memoryHog.add(new byte[1024 * 1024]); // 1MB per object
                 logger.info("Allocated {} MB", memoryHog.size());

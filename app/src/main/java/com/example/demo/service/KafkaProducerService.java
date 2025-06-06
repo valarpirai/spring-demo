@@ -12,10 +12,14 @@ import org.springframework.stereotype.Service;
 public class KafkaProducerService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired private KafkaTemplate<String, MessageContext> kafkaTemplate;
+    private final KafkaTemplate<String, MessageContext> kafkaTemplate;
 
     @Value("${spring.kafka.consumer.topic}")
     private String kafkaTopic;
+
+    public KafkaProducerService(KafkaTemplate<String, MessageContext> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
+    }
 
     public void sendMessage(MessageContext message) {
         kafkaTemplate.send(kafkaTopic, message.getId(), message);

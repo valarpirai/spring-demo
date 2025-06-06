@@ -20,7 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class BookController {
 
-    @Autowired private BookService bookService;
+    private final BookService bookService;
+
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
+    }
 
     @GetMapping("/books")
     public PagedResponse<Book> getAllBooksWithReviews(
