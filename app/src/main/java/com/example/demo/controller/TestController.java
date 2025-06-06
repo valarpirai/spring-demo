@@ -31,20 +31,20 @@ public class TestController {
 
     @Transactional
     @GetMapping("/test-sleep-1")
-    String testSleepWithTransaction(@RequestParam(defaultValue = "0") int seconds)
+    String testSleepWithTransaction(@RequestParam(defaultValue = "1") int seconds)
             throws InterruptedException {
-        accessBooks(seconds);
+        try {
+            accessBooks(seconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw e;
+        }
         return "Done";
     }
 
     private void accessBooks(int seconds) throws InterruptedException {
-        try {
-            Thread.sleep(seconds * 1000L);
-            bookService.findAllBooksWithReviews(0, 10);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // Restore interrupted status
-            throw e;
-        }
+        Thread.sleep(seconds * 1000L);
+        bookService.findAllBooksWithReviews(0, 10);
     }
 
     @GetMapping("/trigger-oom")

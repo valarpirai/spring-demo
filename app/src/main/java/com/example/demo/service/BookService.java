@@ -107,7 +107,7 @@ public class BookService {
         String sql = "SELECT * FROM books WHERE id = ?";
         Book book = jdbcTemplate.queryForObject(sql, bookRowMapper, id);
         if (book == null) {
-            throw new RuntimeException("Book not found");
+            throw new ResourceNotFoundException("Book not found");
         }
         return book;
     }

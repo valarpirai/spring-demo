@@ -23,7 +23,7 @@ public class TimedDataSource implements DataSource {
     @Override
     public Connection getConnection() throws SQLException {
         Connection connection = delegate.getConnection();
-        return new InstrumentedDbConnection(connection, delegate.getPoolName());
+        return new InstrumentedDbConnection(connection);
     }
 
     // Delegate other DataSource methods

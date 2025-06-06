@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class InstrumentedDbConnection implements Connection {
     private final Connection delegate;
 
-    public InstrumentedDbConnection(Connection delegate, String poolName) {
+    public InstrumentedDbConnection(Connection delegate) {
         this.delegate = delegate;
     }
 
