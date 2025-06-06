@@ -31,7 +31,7 @@ public class TestController {
 
     @Transactional
     @GetMapping("/test-sleep-1")
-    String testSleepWithTransaction(@RequestParam(defaultValue = "1") int seconds)
+    String testSleepWithTransaction(@RequestParam(defaultValue = "0") int seconds)
             throws InterruptedException {
         accessBooks(seconds);
         return "Done";

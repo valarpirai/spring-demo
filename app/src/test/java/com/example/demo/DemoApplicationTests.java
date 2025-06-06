@@ -7,5 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 class DemoApplicationTests {
 
     @Test
-    void contextLoads() {}
+    void contextLoads() {
+        // Having empty method to test Spring context loads
+    }
 }

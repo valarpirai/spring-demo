@@ -20,6 +20,7 @@ public class KafkaProducerController {
 
     @PostMapping("/send")
     public String produceKafkaMessage(@RequestBody MessageContext message) {
+        logger.info("Sending message: {}", message);
         producerService.sendMessage(message);
         return "Message sent: " + message;
     }

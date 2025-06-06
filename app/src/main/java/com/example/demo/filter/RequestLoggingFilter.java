@@ -13,7 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
 public class RequestLoggingFilter extends OncePerRequestFilter {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Trace
     @Override
@@ -30,7 +30,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
                     System.currentTimeMillis() - startTime; // Calculate how long the request took.
 
             // Log response details after request processing.
-            logger.info(
+            log.info(
                     "Request: {} {}, Status={}, URI={}, Duration={}ms",
                     request.getMethod(),
                     request.getRequestURI(),
@@ -40,7 +40,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
 
             // Log any exceptions that occurred during processing.
             if (request.getAttribute("javax.servlet.error.exception") != null) {
-                logger.error(
+                log.error(
                         "Exception during request processing",
                         (Exception) request.getAttribute("javax.servlet.error.exception"));
             }

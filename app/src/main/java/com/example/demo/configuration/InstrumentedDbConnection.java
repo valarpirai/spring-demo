@@ -6,11 +6,9 @@ import java.sql.SQLException;
 
 public class InstrumentedDbConnection implements Connection {
     private final Connection delegate;
-    private final String poolName;
 
     public InstrumentedDbConnection(Connection delegate, String poolName) {
         this.delegate = delegate;
-        this.poolName = poolName;
     }
 
     @Trace(operationName = "db.connection.release", resourceName = "HikariPool release")

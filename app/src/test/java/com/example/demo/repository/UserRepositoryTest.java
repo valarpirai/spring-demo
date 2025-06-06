@@ -59,7 +59,7 @@ class UserRepositoryTest {
         User user = new User("Alice", "hello_world", "user@gmail.com");
 
         // Act
-        User savedUser = userRepository.save(user);
+        var savedUser = userRepository.save(user);
         List<User> foundUser = userRepository.findAll();
 
         Optional<User> result =
@@ -67,6 +67,7 @@ class UserRepositoryTest {
 
         // Assert
         assertTrue(result.isPresent(), "User should be present");
+        assertEquals(savedUser.getId(), result.get().getId());
         assertEquals("user@gmail.com", result.get().getEmail());
         assertEquals("hello_world", result.get().getPassword());
     }

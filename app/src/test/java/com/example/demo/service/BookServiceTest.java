@@ -19,7 +19,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 @ExtendWith(MockitoExtension.class)
-public class BookServiceTest {
+class BookServiceTest {
 
     @Mock JdbcTemplate jdbcTemplate;
 

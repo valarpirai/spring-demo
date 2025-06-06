@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.PagedResponse;
 import com.example.demo.eventlisteners.MyCustomEvent;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Book;
 import com.example.demo.model.Review;
 import com.example.demo.model.ReviewWithBookId;
@@ -13,8 +14,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -24,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 public class BookService {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final JdbcTemplate jdbcTemplate;
     private final ApplicationEventPublisher eventPublisher;
     private final BookRepository bookRepository;
@@ -94,7 +92,7 @@ public class BookService {
         String checkSql = "SELECT COUNT(*) FROM books WHERE id = ?";
         Long count = jdbcTemplate.queryForObject(checkSql, Long.class, bookId);
         if (count == null || count == 0) {
-            throw new IllegalArgumentException("Book with ID " + bookId + " does not exist");
+            throw new ResourceNotFoundException("Book with ID " + bookId + " does not exist");
         }
 
         String sql = "INSERT INTO reviews (comment, rating, book_id) VALUES (?, ?, ?)";
