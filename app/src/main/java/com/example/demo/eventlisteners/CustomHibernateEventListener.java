@@ -8,16 +8,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CustomHibernateEventListener implements
-        PreInsertEventListener,
-        PostInsertEventListener,
-        PreUpdateEventListener,
-        PostUpdateEventListener,
-        PreDeleteEventListener,
-        PostDeleteEventListener,
-        FlushEventListener {
+public class CustomHibernateEventListener
+        implements PreInsertEventListener,
+                PostInsertEventListener,
+                PreUpdateEventListener,
+                PostUpdateEventListener,
+                PreDeleteEventListener,
+                PostDeleteEventListener,
+                FlushEventListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(CustomHibernateEventListener.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(CustomHibernateEventListener.class);
 
     @Trace
     @Override

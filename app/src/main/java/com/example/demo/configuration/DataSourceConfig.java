@@ -2,6 +2,7 @@ package com.example.demo.configuration;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import java.util.Properties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,8 +10,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-
-import java.util.Properties;
 
 @Configuration
 public class DataSourceConfig {
@@ -44,8 +43,11 @@ public class DataSourceConfig {
         emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 
         Properties jpaProperties = new Properties();
-        jpaProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect"); // Adjust for your database
-        jpaProperties.setProperty("hibernate.hbm2ddl.auto", "update"); // For development; adjust as needed
+        jpaProperties.setProperty(
+                "hibernate.dialect",
+                "org.hibernate.dialect.MySQLDialect"); // Adjust for your database
+        jpaProperties.setProperty(
+                "hibernate.hbm2ddl.auto", "update"); // For development; adjust as needed
         jpaProperties.setProperty("hibernate.show_sql", "true"); // Optional: show SQL in logs
         emf.setJpaProperties(jpaProperties);
 
@@ -53,10 +55,10 @@ public class DataSourceConfig {
     }
 
     @Bean
-    public JpaTransactionManager transactionManager(LocalContainerEntityManagerFactoryBean entityManagerFactory) {
+    public JpaTransactionManager transactionManager(
+            LocalContainerEntityManagerFactoryBean entityManagerFactory) {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(entityManagerFactory.getObject());
         return transactionManager;
     }
 }
-

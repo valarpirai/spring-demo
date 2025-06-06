@@ -15,12 +15,14 @@ public class ConnectionMetrics {
     }
 
     public void recordAcquisitionTime(long acquisitionTimeNs) {
-        meterRegistry.timer("db.connection.acquisition.time", "pool", "MyHikariPool")
+        meterRegistry
+                .timer("db.connection.acquisition.time", "pool", "MyHikariPool")
                 .record(acquisitionTimeNs, java.util.concurrent.TimeUnit.NANOSECONDS);
     }
 
     public void recordReleaseTime(long releaseTimeNs) {
-        meterRegistry.timer("db.connection.release.time", "pool", "MyHikariPool")
+        meterRegistry
+                .timer("db.connection.release.time", "pool", "MyHikariPool")
                 .record(releaseTimeNs, java.util.concurrent.TimeUnit.NANOSECONDS);
     }
 }

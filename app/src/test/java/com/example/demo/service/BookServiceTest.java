@@ -1,6 +1,14 @@
 package com.example.demo.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.example.demo.model.Book;
+import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -10,23 +18,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
-import java.time.LocalDate;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 public class BookServiceTest {
 
-    @Mock
-    JdbcTemplate jdbcTemplate;
+    @Mock JdbcTemplate jdbcTemplate;
 
-    @InjectMocks
-    BookService bookService;
+    @InjectMocks BookService bookService;
 
     @Test
     void test_getBookById_bookExists() {
@@ -34,9 +31,8 @@ public class BookServiceTest {
         Book book = new Book(bookId, "Test book", "Valar", LocalDate.now(), 1L, null);
 
         when(jdbcTemplate.queryForObject(
-                eq("SELECT * FROM books WHERE id = ?"),
-                any(RowMapper.class),
-                eq(bookId))).thenReturn(book);
+                        eq("SELECT * FROM books WHERE id = ?"), any(RowMapper.class), eq(bookId)))
+                .thenReturn(book);
 
         // Act
         Book result = bookService.findBookById(bookId);
@@ -46,11 +42,11 @@ public class BookServiceTest {
 
         // Capture the RowMapper argument
         ArgumentCaptor<RowMapper> rowMapperCaptor = ArgumentCaptor.forClass(RowMapper.class);
-        verify(jdbcTemplate).queryForObject(
-                eq("SELECT * FROM books WHERE id = ?"),
-                rowMapperCaptor.capture(),
-                eq(bookId)
-        );
+        verify(jdbcTemplate)
+                .queryForObject(
+                        eq("SELECT * FROM books WHERE id = ?"),
+                        rowMapperCaptor.capture(),
+                        eq(bookId));
     }
 
     @Test
@@ -58,12 +54,10 @@ public class BookServiceTest {
         Long bookId = 1L;
 
         when(jdbcTemplate.queryForObject(
-                eq("SELECT * FROM books WHERE id = ?"),
-                any(RowMapper.class),
-                eq(bookId))).thenReturn(null);
+                        eq("SELECT * FROM books WHERE id = ?"), any(RowMapper.class), eq(bookId)))
+                .thenReturn(null);
 
         // Act & Asset
         assertThrows(RuntimeException.class, () -> bookService.findBookById(bookId));
-
     }
 }

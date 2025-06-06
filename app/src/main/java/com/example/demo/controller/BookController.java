@@ -6,6 +6,7 @@ import com.example.demo.dto.ReviewInputDto;
 import com.example.demo.model.Book;
 import com.example.demo.model.Review;
 import com.example.demo.service.BookService;
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,19 +17,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-
 @RestController
 public class BookController {
 
-    @Autowired
-    private BookService bookService;
+    @Autowired private BookService bookService;
 
     @GetMapping("/books")
     public PagedResponse<Book> getAllBooksWithReviews(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
+            @RequestParam(defaultValue = "10") int size) {
         return bookService.findAllBooksWithReviews(page, size);
     }
 
@@ -39,7 +36,14 @@ public class BookController {
 
     @PostMapping("/books")
     public Book createBook(@RequestBody BookInputDto bookDto) {
-        Book book = new Book(null, bookDto.title(), bookDto.author(), bookDto.publicationDate(), 1L, new ArrayList<>());
+        Book book =
+                new Book(
+                        null,
+                        bookDto.title(),
+                        bookDto.author(),
+                        bookDto.publicationDate(),
+                        1L,
+                        new ArrayList<>());
         return bookService.createBook(book);
     }
 

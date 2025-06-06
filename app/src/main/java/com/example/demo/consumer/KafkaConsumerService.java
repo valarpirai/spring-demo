@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 public class KafkaConsumerService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @KafkaListener(topics = "${spring.kafka.consumer.topic}", groupId = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(
+            topics = "${spring.kafka.consumer.topic}",
+            groupId = "${spring.kafka.consumer.group-id}")
     public void consumeMessage(MessageContext message) {
         if (message != null) {
             logger.info("Message received: {}", message);

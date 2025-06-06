@@ -6,6 +6,11 @@ import com.example.demo.model.Book;
 import com.example.demo.model.Review;
 import com.example.demo.model.ReviewWithBookId;
 import com.example.demo.repository.BookRepository;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.slf4j.Logger;
@@ -16,13 +21,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 @Slf4j
 @Service
 public class BookService {
@@ -32,28 +30,34 @@ public class BookService {
     private final BookRepository bookRepository;
 
     // RowMapper for Book
-    private final RowMapper<Book> bookRowMapper = (rs, rowNum) -> new Book(
-            rs.getLong("id"),
-            rs.getString("title"),
-            rs.getString("author"),
-            rs.getObject("publication_date", LocalDate.class),
-            (Long) rs.getObject("version"),
-            new ArrayList<>()
-    );
+    private final RowMapper<Book> bookRowMapper =
+            (rs, rowNum) ->
+                    new Book(
+                            rs.getLong("id"),
+                            rs.getString("title"),
+                            rs.getString("author"),
+                            rs.getObject("publication_date", LocalDate.class),
+                            (Long) rs.getObject("version"),
+                            new ArrayList<>());
 
     // RowMapper for Review
-    private final RowMapper<ReviewWithBookId> reviewRowMapper = (rs, rowNum) -> {
-        Review review = new Review(
-                rs.getLong("id"),
-                rs.getString("comment"),
-                rs.getInt("rating"),
-                null // Book reference set later
-        );
-        Long bookId = rs.getLong("book_id");
-        return new ReviewWithBookId(review, bookId);
-    };
+    private final RowMapper<ReviewWithBookId> reviewRowMapper =
+            (rs, rowNum) -> {
+                Review review =
+                        new Review(
+                                rs.getLong("id"),
+                                rs.getString("comment"),
+                                rs.getInt("rating"),
+                                null // Book reference set later
+                                );
+                Long bookId = rs.getLong("book_id");
+                return new ReviewWithBookId(review, bookId);
+            };
 
-    public BookService(JdbcTemplate jdbcTemplate, ApplicationEventPublisher eventPublisher, BookRepository bookRepository) {
+    public BookService(
+            JdbcTemplate jdbcTemplate,
+            ApplicationEventPublisher eventPublisher,
+            BookRepository bookRepository) {
         this.jdbcTemplate = jdbcTemplate;
         this.eventPublisher = eventPublisher;
         this.bookRepository = bookRepository;
@@ -62,13 +66,25 @@ public class BookService {
     // Create a Book
     @Transactional
     public Book createBook(Book book) {
-        String sql = "INSERT INTO books (title, author, publication_date, version) VALUES (?, ?, ?, ?)";
-        jdbcTemplate.update(sql, book.getTitle(), book.getAuthor(), book.getPublicationDate(), book.getVersion());
+        String sql =
+                "INSERT INTO books (title, author, publication_date, version) VALUES (?, ?, ?, ?)";
+        jdbcTemplate.update(
+                sql,
+                book.getTitle(),
+                book.getAuthor(),
+                book.getPublicationDate(),
+                book.getVersion());
 
         // Retrieve generated ID
         Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
         eventPublisher.publishEvent(new MyCustomEvent(this, "Transaction completed!"));
-        return new Book(id, book.getTitle(), book.getAuthor(), book.getPublicationDate(), 1L, new ArrayList<>());
+        return new Book(
+                id,
+                book.getTitle(),
+                book.getAuthor(),
+                book.getPublicationDate(),
+                1L,
+                new ArrayList<>());
     }
 
     // Create a Review and associate it with a Book
@@ -108,8 +124,19 @@ public class BookService {
     // Update a Book
     public Book updateBook(Long id, Book updatedBook) {
         String sql = "UPDATE books SET title = ?, author = ?, publication_date = ? WHERE id = ?";
-        jdbcTemplate.update(sql, updatedBook.getTitle(), updatedBook.getAuthor(), updatedBook.getPublicationDate(), id);
-        return new Book(id, updatedBook.getTitle(), updatedBook.getAuthor(), updatedBook.getPublicationDate(), 1L, new ArrayList<>());
+        jdbcTemplate.update(
+                sql,
+                updatedBook.getTitle(),
+                updatedBook.getAuthor(),
+                updatedBook.getPublicationDate(),
+                id);
+        return new Book(
+                id,
+                updatedBook.getTitle(),
+                updatedBook.getAuthor(),
+                updatedBook.getPublicationDate(),
+                1L,
+                new ArrayList<>());
     }
 
     // Delete a Book (and its Reviews due to cascade)
@@ -144,26 +171,42 @@ public class BookService {
 
         // Fetch all Reviews for the fetched Books
         if (!books.isEmpty()) {
-            String reviewSql = "SELECT * FROM reviews WHERE book_id IN (" +
-                    books.stream().map(book -> book.getId().toString()).collect(Collectors.joining(",")) + ")";
-            List<ReviewWithBookId> reviewWithBookIds = jdbcTemplate.query(reviewSql, reviewRowMapper);
+            String reviewSql =
+                    "SELECT * FROM reviews WHERE book_id IN ("
+                            + books.stream()
+                                    .map(book -> book.getId().toString())
+                                    .collect(Collectors.joining(","))
+                            + ")";
+            List<ReviewWithBookId> reviewWithBookIds =
+                    jdbcTemplate.query(reviewSql, reviewRowMapper);
 
             // Group Reviews by book_id
-            Map<Long, List<Review>> reviewsByBookId = reviewWithBookIds.stream()
-                    .collect(Collectors.groupingBy(
-                            ReviewWithBookId::bookId,
-                            Collectors.mapping(ReviewWithBookId::review, Collectors.toList())
-                    ));
+            Map<Long, List<Review>> reviewsByBookId =
+                    reviewWithBookIds.stream()
+                            .collect(
+                                    Collectors.groupingBy(
+                                            ReviewWithBookId::bookId,
+                                            Collectors.mapping(
+                                                    ReviewWithBookId::review,
+                                                    Collectors.toList())));
 
             // Associate Reviews with Books
-            books.forEach(book -> {
-                List<Review> bookReviews = reviewsByBookId.getOrDefault(book.getId(), new ArrayList<>());
-                bookReviews.forEach(review -> {
-                    Review updatedReview = new Review(review.getId(), review.getComment(), review.getRating(), null);
-                    updatedReview.setBook(book);
-                    book.addReview(updatedReview);
-                });
-            });
+            books.forEach(
+                    book -> {
+                        List<Review> bookReviews =
+                                reviewsByBookId.getOrDefault(book.getId(), new ArrayList<>());
+                        bookReviews.forEach(
+                                review -> {
+                                    Review updatedReview =
+                                            new Review(
+                                                    review.getId(),
+                                                    review.getComment(),
+                                                    review.getRating(),
+                                                    null);
+                                    updatedReview.setBook(book);
+                                    book.addReview(updatedReview);
+                                });
+                    });
         }
 
         // Calculate total pages

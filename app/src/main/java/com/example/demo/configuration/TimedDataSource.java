@@ -2,15 +2,14 @@ package com.example.demo.configuration;
 
 import com.zaxxer.hikari.HikariDataSource;
 import datadog.trace.api.Trace;
-import org.springframework.stereotype.Component;
-
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ConnectionBuilder;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.sql.ShardingKeyBuilder;
 import java.util.logging.Logger;
+import javax.sql.DataSource;
+import org.springframework.stereotype.Component;
 
 @Component
 public class TimedDataSource implements DataSource {

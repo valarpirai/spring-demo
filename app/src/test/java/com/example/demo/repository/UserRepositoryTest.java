@@ -1,6 +1,12 @@
 package com.example.demo.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.example.demo.model.User;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -11,23 +17,17 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @Testcontainers
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class UserRepositoryTest {
 
     @Container
-    private static final MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.4.5")
-            .withDatabaseName("testdb")
-            .withUsername("test")
-            .withPassword("test");
+    private static final MySQLContainer<?> mysql =
+            new MySQLContainer<>("mysql:8.4.5")
+                    .withDatabaseName("testdb")
+                    .withUsername("test")
+                    .withPassword("test");
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
@@ -37,8 +37,7 @@ class UserRepositoryTest {
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
     }
 
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired private UserRepository userRepository;
 
     @Test
     void saveUser_PersistsAndRetrievesUser() {
@@ -63,7 +62,8 @@ class UserRepositoryTest {
         User savedUser = userRepository.save(user);
         List<User> foundUser = userRepository.findAll();
 
-        Optional<User> result = foundUser.stream().filter(u -> u.getUsername().equals("Alice")).findFirst();
+        Optional<User> result =
+                foundUser.stream().filter(u -> u.getUsername().equals("Alice")).findFirst();
 
         // Assert
         assertTrue(result.isPresent(), "User should be present");
@@ -71,4 +71,3 @@ class UserRepositoryTest {
         assertEquals("hello_world", result.get().getPassword());
     }
 }
-
