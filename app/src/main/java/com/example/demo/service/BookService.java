@@ -169,14 +169,14 @@ public class BookService {
 
         // Fetch all Reviews for the fetched Books
         if (!books.isEmpty()) {
-            String reviewSql =
-                    "SELECT * FROM reviews WHERE book_id IN ("
-                            + books.stream()
-                                    .map(book -> book.getId().toString())
-                                    .collect(Collectors.joining(","))
-                            + ")";
+            String reviewSql = "SELECT * FROM reviews WHERE book_id IN (?)";
             List<ReviewWithBookId> reviewWithBookIds =
-                    jdbcTemplate.query(reviewSql, reviewRowMapper);
+                    jdbcTemplate.query(
+                            reviewSql,
+                            reviewRowMapper,
+                            books.stream()
+                                    .map(book -> book.getId().toString())
+                                    .collect(Collectors.joining(",")));
 
             // Group Reviews by book_id
             Map<Long, List<Review>> reviewsByBookId =
