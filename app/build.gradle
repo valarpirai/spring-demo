@@ -32,7 +32,7 @@ sonarqube {
 		property 'sonar.projectKey', 'my-spring-boot-project'
 		property 'sonar.projectName', 'My Spring Boot Project'
 		property 'sonar.host.url', 'http://localhost:9000'
-		property 'sonar.token', 'sqp_fa66b0120cdc5ff70a0ec45abd8baa4c052ff83f' // Replace with token from Step 2
+		property 'sonar.token', 'sqp_a7b6209e7f2b5194803115f1f51a1950c8c7a94e' // Replace with token from Step 2
 		property 'sonar.java.source', '17'
 		property 'sonar.sources', 'src/main/java'
 		property 'sonar.tests', 'src/test/java'
