@@ -45,6 +45,8 @@ subprojects {
 
         // Micrometer for Datadog
         runtimeOnly 'io.micrometer:micrometer-registry-datadog'
+        implementation 'io.micrometer:micrometer-registry-prometheus'
+
         // Datadog Tracing
         implementation 'com.datadoghq:dd-trace-api:1.48.0' // Use the latest version
     }
