@@ -54,11 +54,13 @@ services:
     image: postgres:17-alpine
     restart: always
     environment:
-      POSTGRES_PASSWORD: 'root'
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
     ports:
       - "5432:5432"
     volumes:
       - pg-data:/var/lib/postgresql/data
+      - ./init-sonarqube-db.sh:/docker-entrypoint-initdb.d/init-sonarqube-db.sh
 
   redis:
     image: redis/redis-stack:latest
@@ -69,7 +71,7 @@ services:
     volumes:
       - redis_data:/data
 
-  datadog:
+  datadog-agent:
     image: gcr.io/datadoghq/agent:7
     container_name: dd-agent
     ports:
@@ -105,6 +107,22 @@ services:
       - ./pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt:ro
       - ./pgbouncer/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini:ro
 
+  sonarqube:
+    image: sonarqube:community
+    container_name: sonarqube
+    restart: always
+    ports:
+      - "9000:9000"
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: true
+      SONAR_JDBC_URL: jdbc:postgresql://postgres/sonarqube
+      SONAR_JDBC_USERNAME: sonarqube
+      SONAR_JDBC_PASSWORD: sonar_password
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+
   localstack:
     container_name: localstack_main
     image: localstack/localstack:latest
@@ -135,3 +153,7 @@ volumes:
   redis_data:
   pg-data:
   localstack-data:
+  sonarqube_data:
+  sonarqube_logs:
+  sonarqube_extensions:
+
