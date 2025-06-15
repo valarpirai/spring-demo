@@ -4,16 +4,26 @@
 
     <include resource="org/springframework/boot/logging/logback/base.xml" />
 
-
     <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <customFields>{"ddsource":"java","service":"my-spring-boot-app"}</customFields>
+            <fieldNames>
+                <timestamp>timestamp</timestamp>
+                <message>message</message>
+                <level>level</level>
+                <logger>logger_name</logger>
+                <thread>thread_name</thread>
+            </fieldNames>
+            <!-- Include MDC fields like dd.trace_id -->
+            <includeMdc>true</includeMdc>
+        </encoder>
     </appender>
 
     <!-- File appender for Datadog Agent to tail -->
     <appender name="DDFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_DIR}/app.log</file>
+        <file>${LOG_DIR}/application.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_DIR}/app.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_DIR}/application.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
             <totalSizeCap>3GB</totalSizeCap>
         </rollingPolicy>
@@ -31,8 +41,15 @@
     </appender>
 
     <root level="INFO">
-<!--        <appender-ref ref="FILE"/>-->
+        <appender-ref ref="JSON"/>
         <appender-ref ref="DDFile"/>
     </root>
+
+    <logger name="org.springframework" level="INFO" additivity="false">
+        <appender-ref ref="JSON" />
+    </logger>
+    <logger name="com.example" level="INFO" additivity="false">
+        <appender-ref ref="JSON" />
+    </logger>
 
 </configuration>

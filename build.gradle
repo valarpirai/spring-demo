@@ -11,6 +11,7 @@ allprojects {
     // Define repositories for all projects
     repositories {
         mavenCentral()
+        maven { url 'https://repo.spring.io/snapshot' }
     }
 }
 
@@ -33,6 +34,8 @@ subprojects {
         // Spring Boot Starter Data JPA for database access
         implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
         implementation 'com.zaxxer:HikariCP:4.0.3'
+
+        implementation platform("org.springframework.ai:spring-ai-bom:1.0.0-SNAPSHOT")
 
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
