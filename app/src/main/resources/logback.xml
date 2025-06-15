@@ -14,8 +14,6 @@
                 <logger>logger_name</logger>
                 <thread>thread_name</thread>
             </fieldNames>
-            <!-- Include MDC fields like dd.trace_id -->
-            <includeMdc>true</includeMdc>
         </encoder>
     </appender>
 
