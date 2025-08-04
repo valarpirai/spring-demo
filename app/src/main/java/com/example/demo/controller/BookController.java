@@ -7,6 +7,8 @@ import com.example.demo.model.Book;
 import com.example.demo.model.Review;
 import com.example.demo.service.BookService;
 import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,6 +39,11 @@ public class BookController {
         return bookService.findBookWithReviews(id);
     }
 
+    @GetMapping("/book")
+    List<Book> getBookByName(@RequestParam String name) {
+        return bookService.findBookByName(name);
+    }
+
     @PostMapping("/books")
     public Book createBook(@RequestBody BookInputDto bookDto) {
         Book book =
@@ -58,7 +65,7 @@ public class BookController {
 
     @PutMapping("/book/{id}")
     public Book updateBook(@PathVariable Long id, @RequestBody Book book) {
-        return bookService.updateBook(id, book);
+        return bookService.updateBookV2(id, book);
     }
 
     @DeleteMapping("/book/{id}")

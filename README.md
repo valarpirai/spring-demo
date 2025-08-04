@@ -21,3 +21,26 @@ Steps:
 - Run the following command
 
 `./gradlew sonar` - Run sonar scanning
+
+### Protobuf Setup
+Protocol Buffers (.proto files) are located in `src/main/protobuf/` directory.
+
+#### Generating Java Classes from .proto files
+
+**Prerequisites:**
+Install Protocol Buffer compiler:
+- macOS: `brew install protobuf`
+- Ubuntu/Debian: `sudo apt-get install protobuf-compiler`
+- Windows: Download from [Protocol Buffers releases](https://github.com/protocolbuffers/protobuf/releases)
+
+**Generate Java classes:**
+```bash
+protoc --java_out=src/main/java --proto_path=src/main/protobuf src/main/protobuf/*.proto
+```
+
+**Current proto files:**
+- `user_message.proto` - Defines UserMessage structure for Kafka messaging
+
+**Kafka Protobuf Integration:**
+- Producer endpoint: `POST /send-protobuf`
+- Consumer automatically processes protobuf messages from `user-protobuf-topic`

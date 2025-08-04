@@ -11,7 +11,7 @@ allprojects {
     // Define repositories for all projects
     repositories {
         mavenCentral()
-        maven { url 'https://repo.spring.io/snapshot' }
+        maven { url = 'https://repo.spring.io/snapshot' }
     }
 }
 

@@ -119,6 +119,15 @@ public class BookService {
         return book;
     }
 
+    @Transactional
+    public Book updateBookV2(Long bookId, Book bookDto) {
+        Book book = bookRepository.findById(bookId).orElseThrow();
+        book.setTitle(bookDto.getTitle());
+        book.setAuthor(bookDto.getAuthor());
+        Hibernate.initialize(book.getReviews());
+        return book;
+    }
+
     // Update a Book
     public Book updateBook(Long id, Book updatedBook) {
         String sql = "UPDATE books SET title = ?, author = ?, publication_date = ? WHERE id = ?";
@@ -212,5 +221,10 @@ public class BookService {
 
         // Return paginated response
         return new PagedResponse<>(books, page, size, totalElements, totalPages);
+    }
+
+//    @Transactional
+    public List<Book> findBookByName(String name) {
+        return bookRepository.findBooksByTitleContaining(name);
     }
 }

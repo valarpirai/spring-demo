@@ -20,6 +20,11 @@ configurations {
 		extendsFrom annotationProcessor
 	}
 }
+configurations.all {
+	resolutionStrategy {
+		force 'com.google.protobuf:protobuf-java:4.29.3'
+	}
+}
 
 spotless {
 	java {
@@ -53,10 +58,17 @@ dependencies {
 
 	implementation 'org.springframework.kafka:spring-kafka'
 
+	implementation 'com.google.protobuf:protobuf-java:4.29.3'
+
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
 	// Spring Boot Actuator
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'io.opentelemetry:opentelemetry-api:1.37.0'
+	implementation 'io.opentelemetry:opentelemetry-sdk:1.37.0'
+	implementation 'io.opentelemetry:opentelemetry-sdk-metrics:1.37.0'
+	implementation 'io.opentelemetry:opentelemetry-exporter-otlp:1.37.0'
+
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

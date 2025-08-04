@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package com.example.demo.proto;
+
+option java_package = "com.example.demo.proto";
+option java_multiple_files = true;
+option java_outer_classname = "UserMessageProto";
+
+message UserMessage {
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  string message = 4;
+  int64 timestamp = 5;
+  MessageType type = 6;
+}
+
+enum MessageType {
+  INFO = 0;
+  WARNING = 1;
+  ERROR = 2;
+}
